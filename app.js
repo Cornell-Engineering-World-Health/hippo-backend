@@ -6,7 +6,7 @@ var mongoose = require('mongoose')
 
 var app = express()
 
-mongoose.connect('mongodb://localhost:27017/beerlocker')
+mongoose.connect(process.env.DB_MONGODB_URL)
 
 app.use(bodyParser.urlencoded({
   extended: true

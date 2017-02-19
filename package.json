@@ -12,6 +12,7 @@
     "standard": "^8.6.0"
   },
   "scripts": {
-    "test": "standard"
+    "test": "standard",
+    "setup": "node setup.js"
   }
 }

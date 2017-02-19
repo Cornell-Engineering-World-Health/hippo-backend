@@ -1,0 +1,4 @@
+OPENTOK_KEY=api_key_here
+OPENTOK_SECRET_KEY=secret_key_here
+
+DB_MONGODB_URL=mongodb://localhost:27017/hippo
