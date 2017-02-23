@@ -21,7 +21,6 @@ router.post('/', function (req, res) {
       if (err) {
         res.send(err)
       }
-
       res.json({ message: 'New session added!', data: video })
     })
   })
@@ -35,6 +34,17 @@ router.get('/:video_name', function (req, res) {
     }
 
     res.json(video)
+  })
+})
+
+// ROUTE - takes a code, and deletes session
+router.delete('/:video_name', function (req, res) {
+  Videocall.findOneAndRemove({ name: req.params.video_name }, function (err) {
+    if (err) {
+      res.send(err)
+    }
+
+    res.json({message: 'session with code: \'' + req.params.video_name + '\' has been deleted.'})
   })
 })
 
