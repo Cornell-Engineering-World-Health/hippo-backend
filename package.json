@@ -9,6 +9,9 @@
     "opentok": "^2.5.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7",
     "standard": "^8.6.0"
   },
   "scripts": {
