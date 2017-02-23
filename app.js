@@ -6,6 +6,15 @@ var mongoose = require('mongoose')
 
 var app = express()
 
+// initialize swagger-jsdoc
+var swaggerSpec = require('./swagger/swagger.js')
+
+// serve swagger
+app.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  res.send(swaggerSpec)
+})
+
 mongoose.connect(process.env.DB_MONGODB_URL)
 
 app.use(bodyParser.urlencoded({
@@ -13,6 +22,8 @@ app.use(bodyParser.urlencoded({
 }))
 
 var port = process.env.PORT || 3000
+
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, '/index.html'))
