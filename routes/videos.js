@@ -9,7 +9,10 @@ router.post('/', function (req, res) {
   // create sessionId
   opentok.createSession(function (err, session) {
     if (err) {
-      res.send(err)
+      res.status(500).json({
+          code: '500 Internal Server Error',
+          detail: 'Opentok internal error.'
+      })
     }
 
     var video = new Videocall()
@@ -19,9 +22,11 @@ router.post('/', function (req, res) {
 
     video.save(function (err) {
       if (err) {
-        res.send(err)
+        res.status(500).json({
+          code: '500 Internal Server Error',
+          detail: 'Mongoose internal error.'
+        })
       }
-
       res.json({ message: 'New session added!', data: video })
     })
   })
@@ -31,10 +36,20 @@ router.post('/', function (req, res) {
 router.get('/:video_name', function (req, res) {
   Videocall.findOne({ name: req.params.video_name }, function (err, video) {
     if (err) {
-      res.send(err)
+      res.status(500).json({
+        code: '500 Internal Server Error',
+        detail: 'Mongoose internal error.'
+      })
     }
-
-    res.json(video)
+    if(video == null){
+      res.status(404).json({
+        code: '404 Not Found',
+        detail: 'Requested video name: \'' + req.params.video_name + '\' does not exist.'
+      })
+    }
+    else{
+      res.json(video)
+    }
   })
 })
 
