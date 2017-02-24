@@ -18,8 +18,8 @@ var swaggerDefinition = {
     },
   },
   host: process.env.BASE_URL,
-  basePath: '/api',
-  
+  basePath: '/',
+
 }
 
 // options for the swagger docs
