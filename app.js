@@ -20,6 +20,7 @@ mongoose.connect(process.env.DB_MONGODB_URL)
 app.use(bodyParser.urlencoded({
   extended: true
 }))
+app.use(bodyParser.json())
 
 var port = process.env.PORT || 3000
 

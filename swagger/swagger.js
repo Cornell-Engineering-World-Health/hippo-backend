@@ -18,8 +18,76 @@ var swaggerDefinition = {
     },
   },
   host: process.env.BASE_URL,
-  basePath: '/',
-
+  basePath: '/api',
+  definitions: {
+    'newSession': {
+      'required': ['message'],
+      'properties': {
+        'message': {
+          'type': 'string'
+        },
+        'data': {
+          'type': 'object',
+          'properties': {
+            '_v': {
+              'type': 'integer'
+            },
+            'tokenId': {
+              'type': 'string'
+            },
+            'sessionId': {
+              'type': 'string'
+            },
+            'name': {
+              'type': 'string'
+            },
+            '_id': {
+              'type': 'string'
+            }
+          }
+        }
+      }
+    },
+    'Error': {
+      'required': ['code', 'detail'],
+      'properties': {
+        'code': {
+          'type': 'string'
+        },
+        'detail': {
+          'type': 'string'
+        }
+      }
+    },
+    'Session': {
+      'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
+      'properties': {
+        '_id': {
+          'type': 'string'
+        },
+        'tokenId': {
+          'type': 'string'
+        },
+        'sessionId': {
+            'type': 'string'
+        },
+        'name': {
+          'type': 'string'
+        },
+        '_v': {
+          'type': 'integer'
+        }
+      }
+    },  
+    'SessionName':{
+      'required': ['name'],
+      'properties': {
+        'name': {
+          'type': 'string'
+        }
+      }
+    }
+  }
 }
 
 // options for the swagger docs
