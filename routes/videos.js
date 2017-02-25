@@ -13,15 +13,17 @@ var Videocall = require('../models/videocall')
  *     description: Create a Session
  *     tags: [Session]
  *     consumes:
- *       - application/x-www-form-urlencoded
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: name
  *         description: Session name
- *         in: formData
+ *         in: body
  *         required: true
  *         type: string
+ *         schema:
+ *            $ref: '#/definitions/SessionName'
  *     responses:
  *       200:
  *         description: Session successfully created
@@ -35,7 +37,6 @@ var Videocall = require('../models/videocall')
  *           $ref: '#/definitions/Error'
  */
 router.post('/', function (req, res) {
- 
   // create sessionId
   opentok.createSession(function (err, session) {
     if (err) {

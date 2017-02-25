@@ -78,6 +78,14 @@ var swaggerDefinition = {
           'type': 'integer'
         }
       }
+    },  
+    'SessionName':{
+      'required': ['name'],
+      'properties': {
+        'name': {
+          'type': 'string'
+        }
+      }
     }
   }
 }
