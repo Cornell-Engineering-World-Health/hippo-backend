@@ -11,7 +11,7 @@ router.post('/', function (req, res) {
     if (err) {
       res.status(500).json({
           code: '500 Internal Server Error',
-          detail: 'Opentok internal error.'
+          detail: 'Internal Opentok error while creating a new session.'
       })
     }
 
@@ -24,7 +24,7 @@ router.post('/', function (req, res) {
       if (err) {
         res.status(500).json({
           code: '500 Internal Server Error',
-          detail: 'Mongoose internal error.'
+          detail: 'Internal Mongoose error while writing to database.'
         })
       }
       res.json({ message: 'New session added!', data: video })
@@ -38,7 +38,7 @@ router.get('/:video_name', function (req, res) {
     if (err) {
       res.status(500).json({
         code: '500 Internal Server Error',
-        detail: 'Mongoose internal error.'
+        detail: 'Internal Mongoose error while reading from database.'
       })
     }
     if(video == null){
