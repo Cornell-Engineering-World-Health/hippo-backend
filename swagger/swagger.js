@@ -86,6 +86,14 @@ var swaggerDefinition = {
           'type': 'string'
         }
       }
+    },
+    'message': {
+      'required': ['message'],
+      'properties': {
+        'message': {
+          'type': 'string'
+        }
+      }
     }
   }
 }
