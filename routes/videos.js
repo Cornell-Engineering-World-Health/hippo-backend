@@ -3,6 +3,7 @@ var router = express.Router()
 var OpenTok = require('opentok')
 var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
 var Videocall = require('../models/videocall')
+var videoServices = require('../services/videos')
 
 // ROUTE - create a session, return session and token
 /**
@@ -43,30 +44,20 @@ router.post('/', function (req, res) {
     }
 
     var video = new Videocall()
+    randName = videoServices.generateChatName(function (name) {
+      video.name = name
+      video.sessionId = session.sessionId
+      video.tokenId = session.generateToken()
 
-    rand_name = ""
-    complete = false
-    while (complete == false) {
-      rand_name = Math.random().toString(36).substr(2,10)
-      Videocall.findOne({ name: rand_name }, function(err,video) {
+      console.log("adding vid with name: " + name)
+
+      video.save(function (err) {
         if (err) {
-          complete = true
+          res.send(err)
         }
-      })
-    }
 
-    console.log("created new session with name: " + rand_name)
-
-    video.name = rand_name
-    video.sessionId = session.sessionId
-    video.tokenId = session.generateToken()
-
-    video.save(function (err) {
-      if (err) {
-        res.send(err)
-      }
-
-      res.json({ message: 'New session added!', data: video })
+        res.json({ message: 'New session added!', data: video })
+    })
     })
   })
 })
