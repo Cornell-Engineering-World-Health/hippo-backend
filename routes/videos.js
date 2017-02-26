@@ -1,6 +1,8 @@
 var express = require('express')
 var router = express.Router()
-var video = require('../services/videos')
+var OpenTok = require('opentok')
+var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
+var Videocall = require('../models/videocall')
 
 // ROUTE - create a session, return session and token
 /**
@@ -50,7 +52,7 @@ router.post('/', function (req, res) {
         res.send(err)
       }
 
-      res.json({message: 'New session added!', data: video })
+      res.json({ message: 'New session added!', data: video })
     })
   })
 })
