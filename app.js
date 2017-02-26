@@ -10,7 +10,7 @@ var app = express()
 var swaggerSpec = require('./swagger/swagger.js')
 
 // serve swagger
-app.get('/swagger.json', function(req, res) {
+app.get('/swagger.json', function (req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)
 })
@@ -20,7 +20,14 @@ mongoose.connect(process.env.DB_MONGODB_URL)
 app.use(bodyParser.urlencoded({
   extended: true
 }))
+
 app.use(bodyParser.json())
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
 
 var port = process.env.PORT || 3000
 

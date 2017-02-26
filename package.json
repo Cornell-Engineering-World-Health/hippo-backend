@@ -16,5 +16,10 @@
     "start": "node app.js",
     "test": "standard",
     "setup": "node setup.js"
+  },
+  "standard": {
+    "ignore": [
+      "public/*"
+    ]
   }
 }
