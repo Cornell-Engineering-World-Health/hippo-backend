@@ -4,7 +4,6 @@ var OpenTok = require('opentok')
 var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
 var Videocall = require('../models/videocall')
 
-
 // ROUTE - create a session, return session and token
 /**
  * @swagger
