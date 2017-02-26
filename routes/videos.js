@@ -13,7 +13,21 @@ router.post('/', function (req, res) {
     }
 
     var video = new Videocall()
-    video.name = req.body.name
+
+    rand_name = ""
+    complete = false
+    while (complete == false) {
+      rand_name = Math.random().toString(36).substr(2,10)
+      Videocall.findOne({ name: rand_name }, function(err,video) {
+        if (err) {
+          complete = true
+        }
+      })
+    }
+
+    console.log("created new session with name: " + rand_name)
+
+    video.name = rand_name
     video.sessionId = session.sessionId
     video.tokenId = session.generateToken()
 
