@@ -10,11 +10,15 @@
     "swagger-jsdoc": "^1.9.2"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7",
     "standard": "^8.6.0"
   },
   "scripts": {
     "start": "node app.js",
-    "test": "standard",
+    "test": "standard && mocha test/*",
     "setup": "node setup.js"
   },
   "standard": {

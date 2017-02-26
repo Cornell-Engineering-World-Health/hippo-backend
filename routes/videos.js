@@ -52,7 +52,7 @@ router.post('/', function (req, res) {
         res.send(err)
       }
 
-      res.json({message: 'New session added!', data: video })
+      res.json({ message: 'New session added!', data: video })
     })
   })
 })
