@@ -3,9 +3,91 @@ var router = express.Router()
 var video = require('../services/videos')
 
 // ROUTE - create a session, return session and token
-router.post('/', video.createSession)
+/**
+ * @swagger
+ * /videos:
+ *   post:
+ *     description: Create a Session
+ *     tags: [Session]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: name
+ *         description: Session name
+ *         in: body
+ *         required: true
+ *         type: string
+ *         schema:
+ *            $ref: '#/definitions/SessionName'
+ *     responses:
+ *       200:
+ *         description: Session successfully created
+ *         schema:
+ *           type: object
+ *           $ref: '#/definitions/newSession'
+ *       500:
+ *         description: 500 Internal Server Error
+ *         schema:
+ *           type: object
+ *           $ref: '#/definitions/Error'
+ */
+router.post('/', function (req, res) {
+  // create sessionId
+  opentok.createSession(function (err, session) {
+    if (err) {
+      res.send(err)
+    }
+
+    var video = new Videocall()
+    video.name = req.body.name
+    video.sessionId = session.sessionId
+    video.tokenId = session.generateToken()
+
+    video.save(function (err) {
+      if (err) {
+        res.send(err)
+      }
+
+      res.json({message: 'New session added!', data: video })
+    })
+  })
+})
 
 // ROUTE - takes a code, and returns session and token
-router.get('/:video_name', video.getVideo)
+/**
+ * @swagger
+ * /videos/{video_name}:
+ *   get:
+ *     tags: [Session]
+ *     description: Returns a Single Session
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: video_name
+ *         description: Session's Name
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: A single session returned
+ *         schema:
+ *           $ref: '#/definitions/Session'
+ *       500:
+ *         description: Internal Server Error
+ *         schema:
+ *           $ref: '#/definitions/Error'
+ */
+router.get('/:video_name', function (req, res) {
+  Videocall.findOne({ name: req.params.video_name }, function (err, video) {
+    if (err) {
+      res.send(err)
+    }
+
+    res.json(video)
+  })
+})
 
 module.exports = router
