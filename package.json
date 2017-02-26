@@ -1,10 +1,20 @@
 {
-  "name": "TokBoxTurotial",
+  "name": "hippo-backend",
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.16.0",
+    "dotenv": "^4.0.0",
     "express": "^4.8.0",
+    "mongoose": "^4.7.7",
     "opentok": "^2.5.0",
-    "mongoose": "^4.7.7"
+    "swagger-jsdoc": "^1.9.2"
+  },
+  "devDependencies": {
+    "standard": "^8.6.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "standard",
+    "setup": "node setup.js"
   }
 }
