@@ -126,7 +126,7 @@ router.get('/:video_name', function (req, res) {
  *       200:
  *         description: A single session deleted.
  *         schema:
- *           $ref: '#/definitions/message'
+ *           $ref: '#/definitions/deleteSuccessMessage'
  *       500:
  *         description: Internal Server Error
  *         schema:
@@ -147,7 +147,10 @@ router.delete('/:video_name', function (req, res) {
       })
     }
     else{
-      res.json({message: 'session with code: \'' + req.params.video_name + '\' has been deleted.'})
+      res.json({
+        message: 'session with code: \'' + req.params.video_name + '\' has been deleted.',
+        name: req.params.video_name
+      })
     }
   })
 })

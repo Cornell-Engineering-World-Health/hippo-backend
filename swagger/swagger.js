@@ -87,10 +87,13 @@ var swaggerDefinition = {
         }
       }
     },
-    'message': {
-      'required': ['message'],
+    'deleteSuccessMessage': {
+      'required': ['message', 'name'],
       'properties': {
         'message': {
+          'type': 'string'
+        },
+        'name': {
           'type': 'string'
         }
       }
