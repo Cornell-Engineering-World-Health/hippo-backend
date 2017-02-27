@@ -80,7 +80,7 @@ describe('Videos', function () {
           res.body.should.have.property('name')
           res.body.name.should.equal(data.name)
 
-          Videocall.findOne({ name: data.name }, function (err, video){
+          Videocall.findOne({ name: data.name }, function (err, video) {
             should.not.exist(err)
             should.equal(video, null)
           })

@@ -40,8 +40,8 @@ router.post('/', function (req, res) {
   opentok.createSession(function (err, session) {
     if (err) {
       res.status(500).json({
-          code: '500 Internal Server Error',
-          detail: 'Internal Opentok error while creating a new session.'
+        code: '500 Internal Server Error',
+        detail: 'Internal Opentok error while creating a new session.'
       })
     }
 
@@ -95,13 +95,12 @@ router.get('/:video_name', function (req, res) {
         detail: 'Internal Mongoose error while reading from database.'
       })
     }
-    if(video == null){
+    if (video == null) {
       res.status(404).json({
         code: '404 Not Found',
         detail: 'Requested video name: \'' + req.params.video_name + '\' does not exist.'
       })
-    }
-    else{
+    } else {
       res.json(video)
     }
   })
@@ -140,13 +139,12 @@ router.delete('/:video_name', function (req, res) {
         detail: 'Internal Mongoose error while reading from database.'
       })
     }
-    if (video == null){
-        res.status(404).json({
+    if (video == null) {
+      res.status(404).json({
         code: '404 Not Found',
         detail: 'Requested video name: \'' + req.params.video_name + '\' does not exist.'
       })
-    }
-    else{
+    } else {
       res.json({
         message: 'session with code: \'' + req.params.video_name + '\' has been deleted.',
         name: req.params.video_name
