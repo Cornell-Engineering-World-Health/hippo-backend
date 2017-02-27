@@ -45,7 +45,7 @@ var swaggerDefinition = {
         },
         'tokenId': {
           'type': 'string'
-        }  
+        }
       }
     },
     'Error': {
@@ -76,7 +76,7 @@ var swaggerDefinition = {
             },
             '_v': {
               'type': 'integer'
-            },
+            }
           }
         },
         'tokenId': {
