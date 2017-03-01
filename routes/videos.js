@@ -52,14 +52,15 @@ router.post('/', function (req, res) {
       video.sessionId = session.sessionId
       video.tokenId = session.generateToken()
 
-    video.save(function (err) {
-      if (err) {
-        res.status(500).json({
-          code: '500 Internal Server Error',
-          detail: 'Internal Mongoose error while writing to database.'
-        })
-      }
-      res.json({ message: 'New session added!', data: video })
+      video.save(function (err) {
+        if (err) {
+          res.status(500).json({
+            code: '500 Internal Server Error',
+            detail: 'Internal Mongoose error while writing to database.'
+          })
+        }
+        res.json({ message: 'New session added!', data: video })
+      })
     })
   })
 })
