@@ -39,6 +39,8 @@ describe('Videos', function () {
     video.name = 'TestChatName'
     video.sessionId = 'TestSessionId'
     video.tokenId = 'TestTokenId'
+    video.datetime = Date.now()
+    video.participants = []
 
     video.save(function (err, data) {
       should.not.exist(err)
