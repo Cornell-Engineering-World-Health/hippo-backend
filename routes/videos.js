@@ -3,26 +3,25 @@ var router = express.Router()
 var OpenTok = require('opentok')
 var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
 var Videocall = require('../models/videocall')
+var videoServices = require('../services/videos')
 
 // ROUTE - create a session, return session and token
 /**
  * @swagger
  * /videos:
  *   post:
- *     description: Create a Session
+ *     description: Create a Session. Currently nothing required in body
  *     tags: [Session]
  *     consumes:
  *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: name
+ *       - name: body
  *         description: Session name
  *         in: body
- *         required: true
+ *         required: false
  *         type: string
- *         schema:
- *            $ref: '#/definitions/SessionName'
  *     responses:
  *       200:
  *         description: Session successfully created
@@ -45,24 +44,32 @@ router.post('/', function (req, res) {
       })
     }
     var video = new Videocall()
-    video.name = req.body.name
-    video.sessionId = session.sessionId
-
-    var tokenOptions = {}
-    tokenOptions.role = 'publisher'
-    // Generate a token.
-    var token = opentok.generateToken(session.sessionId, tokenOptions)
-
-    video.save(function (err, video) {
+    videoServices.generateChatName(function (err, name) {
       if (err) {
         res.status(500).json({
           code: '500 Internal Server Error',
-          detail: 'Internal Mongoose error while writing to database.'
+          detail: 'Internal Mongoose error while reading from database.'
         })
       }
-      video = video.toObject()
-      video.tokenId = token
-      res.json({ message: 'New session added!', data: video })
+      video.name = name
+      video.sessionId = session.sessionId
+
+      var tokenOptions = {}
+      tokenOptions.role = 'publisher'
+      // Generate a token.
+      var token = opentok.generateToken(session.sessionId, tokenOptions)
+
+      video.save(function (err, video) {
+        if (err) {
+          res.status(500).json({
+            code: '500 Internal Server Error',
+            detail: 'Internal Mongoose error while writing to database.'
+          })
+        }
+        video = video.toObject()
+        video.tokenId = token
+        res.json({ message: 'New session added!', data: video })
+      })
     })
   })
 })

@@ -17,7 +17,7 @@ describe('Videos', function () {
   it('should create and add a SINGLE session on /videos POST', function (done) {
     chai.request(server)
       .post('/api/videos')
-      .send({ 'name': 'TestChatName' })
+      .send({ })
       .end(function (err, res) {
         should.not.exist(err)
         res.should.have.status(200)
@@ -30,9 +30,9 @@ describe('Videos', function () {
         res.body.data.should.have.property('name')
         res.body.data.should.have.property('_id')
 
-        res.body.data.name.should.equal('TestChatName')
+        var chatName = res.body.data.name
 
-        Videocall.findOne({ name: 'TestChatName' }, function (err, video) {
+        Videocall.findOne({ name: chatName }, function (err, video) {
           should.not.exist(err)
           should.not.equal(video, null)
         })
