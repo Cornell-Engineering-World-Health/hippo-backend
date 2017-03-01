@@ -24,11 +24,12 @@ describe('Videos', function () {
         res.should.be.json
         res.body.should.be.a('object')
         res.body.should.have.property('data')
-        res.body.should.have.property('tokenId')
         res.body.data.should.be.a('object')
+        res.body.data.should.have.property('tokenId')
         res.body.data.should.have.property('sessionId')
         res.body.data.should.have.property('name')
         res.body.data.should.have.property('_id')
+
         res.body.data.name.should.equal('TestChatName')
 
         Videocall.findOne({ name: 'TestChatName' }, function (err, video) {
@@ -57,15 +58,13 @@ describe('Videos', function () {
             res.should.have.status(200)
             res.should.be.json
             res.body.should.be.a('object')
-            res.body.should.have.property('data')
+            res.body.should.have.property('name')
+            res.body.should.have.property('sessionId')
+            res.body.should.have.property('_id')
             res.body.should.have.property('tokenId')
-            res.body.data.should.be.a('object')
-            res.body.data.should.have.property('name')
-            res.body.data.should.have.property('sessionId')
-            res.body.data.should.have.property('_id')
-            res.body.data.name.should.equal(data.name)
-            res.body.data.sessionId.should.equal(data.sessionId)
-            res.body.data._id.should.equal(data.id)
+            res.body.name.should.equal(data.name)
+            res.body.sessionId.should.equal(data.sessionId)
+            res.body._id.should.equal(data.id)
             done()
           })
       })
