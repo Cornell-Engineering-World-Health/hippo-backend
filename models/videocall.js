@@ -4,7 +4,6 @@ var connection = require('../services/connection')
 var VideocallSchema = new mongoose.Schema({
   name: { type: String, unique: true, required: true },
   sessionId: { type: String, required: true },
-  tokenId: { type: String },
   datetime: { type: Date, required: true },
 
   // Array referencing the userIds of participants in the call
