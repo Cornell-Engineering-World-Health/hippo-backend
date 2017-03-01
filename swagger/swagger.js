@@ -21,7 +21,7 @@ var swaggerDefinition = {
   basePath: '/api',
   definitions: {
     'newSession': {
-      'required': ['message'],
+      'required': ['message', 'data'],
       'properties': {
         'message': {
           'type': 'string'
@@ -32,9 +32,6 @@ var swaggerDefinition = {
             '_v': {
               'type': 'integer'
             },
-            'tokenId': {
-              'type': 'string'
-            },
             'sessionId': {
               'type': 'string'
             },
@@ -42,6 +39,9 @@ var swaggerDefinition = {
               'type': 'string'
             },
             '_id': {
+              'type': 'string'
+            },
+            'tokenId': {
               'type': 'string'
             }
           }
@@ -65,9 +65,6 @@ var swaggerDefinition = {
         '_id': {
           'type': 'string'
         },
-        'tokenId': {
-          'type': 'string'
-        },
         'sessionId': {
           'type': 'string'
         },
@@ -76,6 +73,9 @@ var swaggerDefinition = {
         },
         '_v': {
           'type': 'integer'
+        },
+        'tokenId': {
+          'type': 'string'
         }
       }
     },

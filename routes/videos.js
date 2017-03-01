@@ -44,19 +44,24 @@ router.post('/', function (req, res) {
         detail: 'Internal Opentok error while creating a new session.'
       })
     }
-
     var video = new Videocall()
     video.name = req.body.name
     video.sessionId = session.sessionId
-    video.tokenId = session.generateToken()
 
-    video.save(function (err) {
+    var tokenOptions = {}
+    tokenOptions.role = 'publisher'
+    // Generate a token.
+    var token = opentok.generateToken(session.sessionId, tokenOptions)
+
+    video.save(function (err, video) {
       if (err) {
         res.status(500).json({
           code: '500 Internal Server Error',
           detail: 'Internal Mongoose error while writing to database.'
         })
       }
+      video = video.toObject()
+      video.tokenId = token
       res.json({ message: 'New session added!', data: video })
     })
   })
@@ -101,6 +106,12 @@ router.get('/:video_name', function (req, res) {
         detail: 'Requested video name: \'' + req.params.video_name + '\' does not exist.'
       })
     } else {
+      var tokenOptions = {}
+      tokenOptions.role = 'publisher'
+      // Generate a token.
+      var token = opentok.generateToken(video.sessionId, tokenOptions)
+      video = video.toObject()
+      video.tokenId = token
       res.json(video)
     }
   })
