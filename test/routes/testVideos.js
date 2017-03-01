@@ -70,4 +70,31 @@ describe('Videos', function () {
       })
     })
   })
+  it('should delete a SINGLE session on /videos/:video_name DELETE', function (done) {
+    var video = new Videocall()
+    video.name = 'TestChatName'
+    video.sessionId = 'TestSessionId'
+    video.tokenId = 'TestTokenId'
+
+    video.save(function (err, data) {
+      should.not.exist(err)
+      chai.request(server)
+        .delete('/api/videos/' + data.name)
+        .end(function (err, res) {
+          should.not.exist(err)
+          res.should.have.status(200)
+          res.should.be.json
+          res.body.should.be.a('object')
+          res.body.should.have.property('message')
+          res.body.should.have.property('name')
+          res.body.name.should.equal(data.name)
+
+          Videocall.findOne({ name: data.name }, function (err, video) {
+            should.not.exist(err)
+            should.equal(video, null)
+          })
+          done()
+        })
+    })
+  })
 })
