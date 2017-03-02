@@ -9,10 +9,21 @@ var UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
 
   // Array referencing the userIds of contact
-  contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+})
 
-  // Array referencing the chatNames of calls this user is participating in
-  calls: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Videocall' }]
+UserSchema.virtual('calls', {
+  ref: 'Videocall',
+  localField: '_id',
+  foreignField: 'participants'
+})
+
+UserSchema.set('toJSON', {
+  virtuals: true
+})
+
+UserSchema.set('toObject', {
+  virtuals: true
 })
 
 UserSchema.plugin(autoIncrement.plugin, {

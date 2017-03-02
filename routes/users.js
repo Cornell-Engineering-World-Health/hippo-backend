@@ -44,7 +44,7 @@ router.post('/', function (req, res) {
 
   user.save(function (err) {
     if (err) {
-      res.status(500).json(Errors.INTERNAL_WRITE(err))
+      return res.status(500).json(Errors.INTERNAL_WRITE(err))
     }
     res.json({ message: 'New user added!', data: user })
   })
@@ -76,15 +76,17 @@ router.post('/', function (req, res) {
  *           $ref: '#/definitions/Error'
  */
 router.get('/:user_id', function (req, res) {
-  User.findOne({ userId: req.params.user_id }, function (err, user) {
+  User
+  .findOne({ userId: req.params.user_id })
+  .populate('contacts calls')
+  .exec(function (err, user) {
     if (err) {
-      res.status(500).json(Errors.INTERNAL_READ(err))
+      return res.status(500).json(Errors.INTERNAL_READ(err))
     }
     if (user == null) {
-      res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
-    } else {
-      res.json(user)
+      return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
     }
+    res.json(user)
   })
 })
 
