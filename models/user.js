@@ -10,7 +10,7 @@ var UserSchema = new mongoose.Schema({
 
   // Array referencing the userIds of contact
   contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
-})
+}, { id: false })
 
 UserSchema.virtual('calls', {
   ref: 'Videocall',
