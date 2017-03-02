@@ -8,6 +8,8 @@ var videoService = require('../../services/videos')
 describe('Video Service', function () {
   describe('generateChatName', function () {
     it('should return a unique chat name', sinon.test(function () {
+      var stub = sinon.stub()
+      stub(null)
       videoService.generateChatName()
     }))
   })
