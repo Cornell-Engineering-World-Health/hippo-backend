@@ -7,14 +7,12 @@
             integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
             crossorigin="anonymous"></script>
     <script charset="utf-8">
-    //var moment = require('moment');
       function startChat() {
         //Take the value of the chat name form input
         var chatName = $('#startChatName').val();
-        var chatTime = "2013-02-04T22:44:30.652Z";//moment().toISOString();
 
         //REST call - jquery
-        $.post('http://localhost:3000/api/videos', { name: chatName, time: chatTime }, function(res) {
+        $.post('http://localhost:3000/api/videos', { name: chatName }, function(res) {
           var apiKey = '45762302';
           var sessionId = res.sessionId;
           var token = res.tokenId;

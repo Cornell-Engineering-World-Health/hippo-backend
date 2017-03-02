@@ -22,11 +22,6 @@ var videoServices = require('../services/videos')
  *         in: body
  *         required: false
  *         type: string
- *       - name: time
- *         description: Scheduled time for the session to occur at
- *         in: body
- *         required: true
- *         type: string
  *     responses:
  *       200:
  *         description: Session successfully created
@@ -58,6 +53,7 @@ router.post('/', function (req, res) {
       }
       video.name = name
       video.sessionId = session.sessionId
+
       var tokenOptions = {}
       tokenOptions.role = 'publisher'
       // Generate a token.
