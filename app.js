@@ -2,7 +2,6 @@ require('dotenv').config()
 var express = require('express')
 var bodyParser = require('body-parser')
 var path = require('path')
-var mongoose = require('mongoose')
 
 var app = express()
 
@@ -14,8 +13,6 @@ app.get('/swagger.json', function (req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)
 })
-
-mongoose.connect(process.env.DB_MONGODB_URL)
 
 app.use(bodyParser.urlencoded({
   extended: true
@@ -40,6 +37,7 @@ app.get('/', function (req, res) {
 var router = express.Router()
 
 router.use('/videos', require('./routes/videos.js'))
+router.use('/users', require('./routes/users.js'))
 
 router.get('/', function (req, res) {
   res.json({ message: 'API' })

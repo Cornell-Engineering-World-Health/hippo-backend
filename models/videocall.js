@@ -1,8 +1,13 @@
 var mongoose = require('mongoose')
+var connection = require('../services/connection')
 
 var VideocallSchema = new mongoose.Schema({
-  name: String,
-  sessionId: String
+  name: { type: String, unique: true, required: true },
+  sessionId: { type: String, required: true },
+  datetime: { type: Date, required: true },
+
+  // Array referencing the userIds of participants in the call
+  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 })
 
-module.exports = mongoose.model('Videocall', VideocallSchema)
+module.exports = connection.model('Videocall', VideocallSchema)
