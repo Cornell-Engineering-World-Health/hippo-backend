@@ -4,7 +4,6 @@ var OpenTok = require('opentok')
 var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
 var Videocall = require('../models/videocall')
 var videoServices = require('../services/videos')
-var moment = require('moment')
 
 // ROUTE - create a session, return session and token
 /**
@@ -58,9 +57,6 @@ router.post('/', function (req, res) {
         })
       }
       video.name = name
-      video.sessionTime = req.time
-      console.log('video name: ' + name)
-      console.log('session time: ' + req.time)
       video.sessionId = session.sessionId
       var tokenOptions = {}
       tokenOptions.role = 'publisher'
@@ -128,35 +124,6 @@ router.get('/:video_name', function (req, res) {
       video = video.toObject()
       video.tokenId = token
       res.json(video)
-    }
-  })
-})
-
-// ROUTE - takes a code, and returns true if within the time range for the
-//         session to begin, false otherwise
-router.get('/:video_name', function (req, res) {
-  Videocall.findOne({ name: req.params.video_name }, function (err, video) {
-    if (err) {
-      res.status(500).json({
-        code: '500 Internal Server Error',
-        detail: 'Internal Mongoose error while reading from database.'
-      })
-    }
-    if (video == null) {
-      res.status(404).json({
-        code: '404 Not Found',
-        detail: 'Requested video name: \'' + req.params.video_name + '\' does not exist.'
-      })
-    } else {
-      video = video.toObject()
-      var callTime = moment(video.sessionTime)
-      var currentTime = moment()
-      var difference = currentTime.diff(callTime, 'minutes')
-      if (difference < 10) {
-        res.json({ ready: true })
-      } else {
-        res.json({ ready: false })
-      }
     }
   })
 })
