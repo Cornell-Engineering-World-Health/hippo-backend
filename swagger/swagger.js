@@ -87,6 +87,50 @@ var swaggerDefinition = {
         }
       }
     },
+    'User': {
+      'required': ['firstName', 'lastName', 'email'],
+      'properties': {
+        'firstName': {
+          'type': 'string'
+        },
+        'lastName': {
+          'type': 'string'
+        },
+        'email': {
+          'type': 'string'
+        }
+      }
+    },
+    'UserResponse': {
+      'properties': {
+        'message': {
+          'type': 'string'
+        },
+        'data': {
+          'type': 'object',
+          'properties': {
+            '_v': {
+              'type': 'integer'
+            },
+            'userId': {
+              'type': 'integer'
+            },
+            'firstName': {
+              'type': 'string'
+            },
+            'lastName': {
+              'type': 'string'
+            },
+            'email': {
+              'type': 'string'
+            },
+            '_id': {
+              'type': 'string'
+            }
+          }
+        }
+      }
+    },
     'deleteSuccessMessage': {
       'required': ['message', 'name'],
       'properties': {
