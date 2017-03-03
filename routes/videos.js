@@ -53,6 +53,8 @@ router.post('/', function (req, res) {
       }
       video.name = name
       video.sessionId = session.sessionId
+      //video.name= "testname"
+      //video.sessionId = "2_MX40NTc2MjMwMn5-MTQ4ODQ4MzEwMDQ3N35UQjAyQ0IxVDVRY0pOdWxrdURHTDQ2ck5-UH4"
 
       var tokenOptions = {}
       tokenOptions.role = 'publisher'
@@ -71,6 +73,39 @@ router.post('/', function (req, res) {
         res.json({ message: 'New session added!', data: video })
       })
     })
+  })
+})
+
+// ROUTE - get all sessions
+/**
+ * @swagger
+ * /videos:
+ *   get:
+ *     description: Get all Sessions.
+ *     tags: [Session]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Sessions successfully returned.
+ *         schema:
+ *           type: array
+ *           items:
+ *            $ref: '#/definitions/Session'
+ *       500:
+ *         description: 500 Internal Server Error
+ *         schema:
+ *           type: object
+ *           $ref: '#/definitions/Error'
+ */
+router.get('/', function (req, res){
+
+  Videocall.find( function(err, videos) {
+    if (err)
+      res.send(err)
+
+    res.json(videos)
+
   })
 })
 
@@ -93,7 +128,7 @@ router.post('/', function (req, res) {
  *       200:
  *         description: A single session returned
  *         schema:
- *           $ref: '#/definitions/Session'
+ *           $ref: '#/definitions/SessionWithToken'
  *       500:
  *         description: Internal Server Error
  *         schema:
@@ -148,6 +183,7 @@ router.get('/:video_name', function (req, res) {
  *         description: Internal Server Error
  *         schema:
  *           $ref: '#/definitions/Error'
+ *            
  */
 router.delete('/:video_name', function (req, res) {
   Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
@@ -164,7 +200,7 @@ router.delete('/:video_name', function (req, res) {
       })
     } else {
       res.json({
-        message: 'session with code: \'' + req.params.video_name + '\' has been deleted.',
+        message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
         name: req.params.video_name
       })
     }

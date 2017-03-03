@@ -10,7 +10,7 @@ var swaggerDefinition = {
     contact: {
       name: 'Cornell Engineering World Health',
       url: 'https://ewh.engineering.cornell.edu/contact.html',
-      email: 'ewhcornell.gmail.com'
+      email: 'ewhcornell@gmail.com'
     },
     license: {
       name: 'MIT',
@@ -59,7 +59,7 @@ var swaggerDefinition = {
         }
       }
     },
-    'Session': {
+    'SessionWithToken': {
       'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
       'properties': {
         '_id': {
@@ -84,6 +84,23 @@ var swaggerDefinition = {
       'properties': {
         'name': {
           'type': 'string'
+        }
+      }
+    },
+    'Session': {
+      'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
+      'properties': {
+        '_id': {
+          'type': 'string'
+        },
+        'sessionId': {
+          'type': 'string'
+        },
+        'name': {
+          'type': 'string'
+        },
+        '_v': {
+          'type': 'integer'
         }
       }
     },
