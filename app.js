@@ -5,8 +5,15 @@ var path = require('path')
 
 var app = express()
 
+// configure passport
+var passport = require('./resources/passport')
+
 // initialize swagger-jsdoc
 var swaggerSpec = require('./swagger/swagger.js')
+
+// initialize passport
+app.use(passport.initialize())
+app.use(passport.session())
 
 // serve swagger
 app.get('/swagger.json', function (req, res) {
@@ -43,6 +50,8 @@ router.get('/', function (req, res) {
   res.json({ message: 'API' })
 })
 
+
+app.use('/auth', require('./routes/auth.js'))
 app.use('/api', router)
 
 // Start the server
