@@ -47,6 +47,48 @@ describe('Videos', function () {
         done()
       })
   })
+  it('should get ALL sessions on /videos GET', function (done) {
+    chai.request(server)
+      .get('/api/videos')
+      .end(function (err, res) {
+        should.not.exist(err)
+        res.should.have.status(200)
+        res.should.be.json
+        res.body.should.be.an('array')
+        res.body.length.should.equal(0)
+
+        var OpenTok = require('opentok')
+        var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
+        opentok.createSession(function (err, session) {
+          should.not.exist(err)
+          var video = new Videocall()
+          video.name = 'TestChatName'
+          video.sessionId = session.sessionId
+          video.datetime = Date.now()
+          video.participants = []
+
+          video.save(function (err, data) {
+            should.not.exist(err)
+            chai.request(server)
+              .get('/api/videos')
+              .end(function (err, res) {
+                should.not.exist(err)
+                res.should.have.status(200)
+                res.should.be.json
+                res.body.should.be.an('array')
+                res.body[0].should.be.a('object')
+                res.body[0].should.have.property('_id')
+                res.body[0].should.have.property('datetime')
+                res.body[0].should.have.property('sessionId')
+                res.body[0].should.have.property('name')
+                res.body[0].name.should.equal(data.name)
+                res.body.length.should.equal(1)
+                done()
+              })
+          })
+        })
+      })
+  })
   it('should get a SINGLE session on /videos/:video_name GET', function (done) {
     var OpenTok = require('opentok')
     var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
