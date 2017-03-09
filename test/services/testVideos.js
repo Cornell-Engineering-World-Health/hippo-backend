@@ -9,12 +9,12 @@ var Videocall = require('../../models/videocall')
 
 describe('Video Service', function () {
   describe('generateChatName', function () {
-    it('should return a unique chat name', sinon.test(function () {
-      sinon.mock(Videocall)
-        .expects('findOne')
-        .chain('exec')
-        .yields(null, null)
-      videoService.generateChatName()
-    }))
+    it('should look for a new name since the current one is already used', function (done) {
+      var mock = sinon.mock(Videocall)
+      mock.expects('findOne').chain('exec').yields('SOME_VALUE', 'SOME_VALUE', null)
+      videoService.generateChatName(function (err, name) { if (err) {} })
+      mock.verify()
+      done()
+    })
   })
 })
