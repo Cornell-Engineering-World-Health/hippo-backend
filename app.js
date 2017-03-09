@@ -4,6 +4,9 @@ var bodyParser = require('body-parser')
 var path = require('path')
 
 var app = express()
+// var http = require('http').Server(app)
+// var io = require('socket.io')(http)
+// var socketio = require('./services/socketio.js')(io)
 
 // initialize swagger-jsdoc
 var swaggerSpec = require('./swagger/swagger.js')

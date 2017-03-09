@@ -1,14 +1,16 @@
-var express = require('express')
-var router = express.Router()
-var OpenTok = require('opentok')
-var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
+  var express = require('express')
+  var router = express.Router()
+  var OpenTok = require('opentok')
+  var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
 
-var Videocall = require('../models/videocall')
-var videoServices = require('../services/videos')
+  var Videocall = require('../models/videocall')
+  var videoServices = require('../services/videos')
 
-var User = require('../models/user')
+  var socketService = require('../services/socketService')
 
-var Errors = require('../resources/errors')
+  var User = require('../models/user')
+
+  var Errors = require('../resources/errors')
 // ROUTE - create a session, return session and token
 /**
  * @swagger
@@ -38,41 +40,41 @@ var Errors = require('../resources/errors')
  *           type: object
  *           $ref: '#/definitions/Error'
  */
-router.post('/', function (req, res) {
+  router.post('/', function (req, res) {
   // create sessionId
-  opentok.createSession(function (err, session) {
-    if (err) {
-      res.status(500).json(Errors.INTERNAL_OPENTOK(err))
-      return
-    }
-    var video = new Videocall()
-    videoServices.generateChatName(function (err, name) {
+    opentok.createSession(function (err, session) {
       if (err) {
-        res.status(500).json(Errors.INTERNAL_READ(err))
+        res.status(500).json(Errors.INTERNAL_OPENTOK(err))
         return
       }
-      video.name = name
-      video.sessionId = session.sessionId
-      video.datetime = Date.now()
-      video.participants = []
-
-      var tokenOptions = {}
-      tokenOptions.role = 'publisher'
-      // Generate a token.
-      var token = opentok.generateToken(session.sessionId, tokenOptions)
-
-      video.save(function (err, video) {
+      var video = new Videocall()
+      videoServices.generateChatName(function (err, name) {
         if (err) {
-          res.status(500).json(Errors.INTERNAL_WRITE(err))
+          res.status(500).json(Errors.INTERNAL_READ(err))
           return
         }
-        video = video.toObject()
-        video.tokenId = token
-        res.json({ message: 'New session added!', data: video })
+        video.name = name
+        video.sessionId = session.sessionId
+        video.datetime = Date.now()
+        video.participants = []
+
+        var tokenOptions = {}
+        tokenOptions.role = 'publisher'
+      // Generate a token.
+        var token = opentok.generateToken(session.sessionId, tokenOptions)
+
+        video.save(function (err, video) {
+          if (err) {
+            res.status(500).json(Errors.INTERNAL_WRITE(err))
+            return
+          }
+          video = video.toObject()
+          video.tokenId = token
+          res.json({ message: 'New session added!', data: video })
+        })
       })
     })
   })
-})
 
 // ROUTE - get all sessions
 /**
@@ -96,15 +98,15 @@ router.post('/', function (req, res) {
  *           type: object
  *           $ref: '#/definitions/Error'
  */
-router.get('/', function (req, res) {
-  Videocall.find(function (err, videos) {
-    if (err) {
-      res.status(500).json(Errors.INTERNAL_READ(err))
-      return
-    }
-    res.json(videos)
+  router.get('/', function (req, res) {
+    Videocall.find(function (err, videos) {
+      if (err) {
+        res.status(500).json(Errors.INTERNAL_READ(err))
+        return
+      }
+      res.json(videos)
+    })
   })
-})
 
 // ROUTE - takes a code, and returns session and token
 /**
@@ -131,8 +133,8 @@ router.get('/', function (req, res) {
  *         schema:
  *           $ref: '#/definitions/Error'
  */
-router.get('/:video_name', function (req, res) {
-  Videocall
+  router.get('/:video_name', function (req, res) {
+    Videocall
   .findOne({ name: req.params.video_name })
   .populate('participants')
   .exec(function (err, video) {
@@ -152,7 +154,7 @@ router.get('/:video_name', function (req, res) {
       res.json(video)
     }
   })
-})
+  })
 
 // ROUTE - takes a code, and deletes session
 /**
@@ -181,22 +183,22 @@ router.get('/:video_name', function (req, res) {
  *
  */
 
-router.delete('/:video_name', function (req, res) {
-  Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
-    if (err) {
-      res.status(500).json(Errors.INTERNAL_READ(err))
-      return
-    }
-    if (video == null) {
-      res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
-    } else {
-      res.json({
-        message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
-        name: req.params.video_name
-      })
-    }
+  router.delete('/:video_name', function (req, res) {
+    Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
+      if (err) {
+        res.status(500).json(Errors.INTERNAL_READ(err))
+        return
+      }
+      if (video == null) {
+        res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
+      } else {
+        res.json({
+          message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
+          name: req.params.video_name
+        })
+      }
+    })
   })
-})
 
 // ROUTE - takes a caller id of a user and a calling id and returns a new call
 /**
@@ -228,58 +230,62 @@ router.delete('/:video_name', function (req, res) {
  *         schema:
  *           $ref: '#/definitions/Error'
  */
-router.post('/:caller_id/users/:calling_id', function (req, res) {
-  opentok.createSession(function (err, session) {
-    if (err) {
-      return res.status(500).json(Errors.INTERNAL_OPENTOK(err))
-    }
-
-    var video = new Videocall()
-    User.findOne({ userId: req.params.caller_id }, function (err, caller) {
+  router.post('/:caller_id/users/:calling_id', function (req, res) {
+    opentok.createSession(function (err, session) {
       if (err) {
-        return res.status(500).json(Errors.INTERNAL_READ(err))
-      } else if (caller == null) {
-        return res.status(404).json(Errors.USER_NOT_FOUND(req.params.caller_id))
+        return res.status(500).json(Errors.INTERNAL_OPENTOK(err))
       }
-      User.findOne({ userId: req.params.calling_id }, function (err, calling) {
+
+      var video = new Videocall()
+      User.findOne({ userId: req.params.caller_id }, function (err, caller) {
         if (err) {
           return res.status(500).json(Errors.INTERNAL_READ(err))
-        } else if (calling == null) {
-          return res.status(404).json(Errors.USER_NOT_FOUND(req.params.calling_id))
+        } else if (caller == null) {
+          return res.status(404).json(Errors.USER_NOT_FOUND(req.params.caller_id))
         }
-
-        videoServices.generateChatName(function (err, name) {
+        User.findOne({ userId: req.params.calling_id }, function (err, calling) {
           if (err) {
             return res.status(500).json(Errors.INTERNAL_READ(err))
+          } else if (calling == null) {
+            return res.status(404).json(Errors.USER_NOT_FOUND(req.params.calling_id))
           }
-          video.name = name
-          video.sessionId = session.sessionId
-          video.datetime = Date.now()
-          video.participants = [ caller._id, calling._id ]
 
-          video.save(function (err, video) {
+          videoServices.generateChatName(function (err, name) {
             if (err) {
-              return res.status(500).json(Errors.INTERNAL_WRITE(err))
+              return res.status(500).json(Errors.INTERNAL_READ(err))
             }
+            video.name = name
+            video.sessionId = session.sessionId
+            video.datetime = Date.now()
+            video.participants = [ caller._id, calling._id ]
 
-            var tokenOptions = {}
-            tokenOptions.role = 'publisher'
-            // Generate a token.
-            var token = opentok.generateToken(session.sessionId, tokenOptions)
-
-            video.populate('participants', function (err) {
+            video.save(function (err, video) {
               if (err) {
-                return res.status(500).json(Errors.INTERNAL_READ(err))
+                return res.status(500).json(Errors.INTERNAL_WRITE(err))
               }
-              video = video.toObject()
-              video.tokenId = token
-              res.json({ message: 'Calling user', data: video })
+
+              var tokenOptions = {}
+              tokenOptions.role = 'publisher'
+            // Generate a token.
+              var token = opentok.generateToken(session.sessionId, tokenOptions)
+
+              video.populate('participants', function (err) {
+                if (err) {
+                  return res.status(500).json(Errors.INTERNAL_READ(err))
+                }
+                video = video.toObject()
+                video.tokenId = token
+
+                // Socket.io
+                // var new_session = io.of(name)
+                socketService.createNewNamespace(name)
+
+                res.json({ message: 'Calling user', data: video })
+              })
             })
           })
         })
       })
     })
   })
-})
-
-module.exports = router
+  module.exports = router
