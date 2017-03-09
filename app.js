@@ -1,6 +1,9 @@
 require('dotenv').config()
 var express = require('express')
 var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
+
 var path = require('path')
 
 var app = express()
@@ -12,6 +15,11 @@ var passport = require('./resources/passport')
 var swaggerSpec = require('./swagger/swagger.js')
 
 // initialize passport
+app.use(session({
+  secret: 'hippoisshortforhippopotamus',
+  resave: false,
+  saveUninitialized: true
+}))
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -21,6 +29,7 @@ app.get('/swagger.json', function (req, res) {
   res.send(swaggerSpec)
 })
 
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({
   extended: true
 }))
