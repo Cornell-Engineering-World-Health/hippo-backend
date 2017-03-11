@@ -9,6 +9,8 @@ var videoServices = require('../services/videos')
 var User = require('../models/user')
 
 var Errors = require('../resources/errors')
+
+var CDR = require('../models/cdr')
 // ROUTE - create a session, return session and token
 /**
  * @swagger
@@ -60,7 +62,6 @@ router.post('/', function (req, res) {
       tokenOptions.role = 'publisher'
       // Generate a token.
       var token = opentok.generateToken(session.sessionId, tokenOptions)
-
       video.save(function (err, video) {
         if (err) {
           res.status(500).json(Errors.INTERNAL_WRITE(err))
@@ -190,9 +191,27 @@ router.delete('/:video_name', function (req, res) {
     if (video == null) {
       res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
     } else {
-      res.json({
-        message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
-        name: req.params.video_name
+      
+      var cdr = new CDR()
+      cdr.creationTime = new Date(req.body.creationTime)
+      cdr.destroyTime = new Date(req.body.destroyTime)
+      cdr.callDuration = req.body.destroyTime.valueOf() - req.body.creationTime.valueOf()
+      cdr.disconnectReason = req.body.disconnectReason
+      cdr.hasVideo = req.body.hasVideo
+      cdr.participants = new Array(req.body.participants.length)
+      for(var i=0; i<req.body.participants.length; i++){
+        cdr.participants[i] = req.body.participants[i]
+      }
+      
+      cdr.save(function(err, cdrInfos){
+        if (err) {
+          return res.status(500).json(Errors.INTERNAL_WRITE(err))
+        }
+        res.json({
+          message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
+          name: req.params.video_name,
+          cdrInfo: cdrInfos
+        })
       })
     }
   })
