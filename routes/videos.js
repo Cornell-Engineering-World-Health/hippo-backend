@@ -278,7 +278,7 @@
 
                 // Socket.io
                 // var new_session = io.of(name)
-                socketService.createNewNamespace(name)
+                socketService.createNewRoom(name, video.participants)
 
                 res.json({ message: 'Calling user', data: video })
               })
