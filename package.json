@@ -22,7 +22,7 @@
     "mocha": "^3.2.0",
     "serve-static": "^1.12.1",
     "sinon": "^1.17.7",
-    "standard": "^8.6.0"
+    "standard": "^8.6.0",
   },
   "scripts": {
     "start": "node app.js",

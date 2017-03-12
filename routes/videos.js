@@ -9,6 +9,7 @@ var videoServices = require('../services/videos')
 var User = require('../models/user')
 
 var Errors = require('../resources/errors')
+
 // ROUTE - create a session, return session and token
 /**
  * @swagger

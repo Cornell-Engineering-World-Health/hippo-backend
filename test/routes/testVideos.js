@@ -6,10 +6,22 @@ var should = chai.should()
 var Videocall = require('../../models/videocall')
 var User = require('../../models/user')
 var UsersResource = require('../resources/usersResource')
-var server = require('../../app')
+var sinon = require('sinon')
 chai.use(chaiHttp)
 
 describe('Videos', function () {
+  var server
+  var auth
+  var ensureAuthenticatedSpy
+
+  before(function (done) {
+    auth = require('../../services/auth')
+    ensureAuthenticatedSpy = sinon.stub(auth, 'ensureAuthenticated', function (res, req, next) {
+      return next()
+    })
+    server = require('../../app')
+    done()
+  })
   afterEach(function (done) {
     Videocall.find({}).remove(function () {
       done()
@@ -17,6 +29,7 @@ describe('Videos', function () {
   })
   after(function (done) {
     User.find({}).remove(function () {
+      ensureAuthenticatedSpy.restore()
       done()
     })
   })
@@ -25,6 +38,7 @@ describe('Videos', function () {
       .post('/api/videos')
       .send({ })
       .end(function (err, res) {
+        console.log(err)
         should.not.exist(err)
         res.should.have.status(200)
         res.should.be.json

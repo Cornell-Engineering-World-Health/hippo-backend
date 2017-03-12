@@ -6,30 +6,6 @@ var request = require('request')
 
 var User = require('../models/user')
 
-// Login Required Middleware
-function ensureAuthenticated (req, res, next) {
-  if (!req.header('Authorization')) {
-    return res.status(401).send({ message:
-      'Please make sure your request has an Authorization header'
-    })
-  }
-  var token = req.header('Authorization').split(' ')[1]
-
-  var payload = null
-  try {
-    payload = jwt.decode(token, process.env.JWT_SECRET)
-  }
-  catch (err) {
-    return res.status(401).send({ message: err.message })
-  }
-
-  if (payload.exp <= moment().unix()) {
-    return res.status(401).send({ message: 'Token has expired' })
-  }
-  req.user = payload.sub
-  next()
-}
-
 // Generate JSON Web Token
 function createJWT (user) {
   var payload = {
@@ -40,7 +16,7 @@ function createJWT (user) {
   return jwt.encode(payload, process.env.JWT_SECRET)
 }
 
-router.post('/auth/google', function (req, res) {
+router.post('/google', function (req, res) {
   var accessTokenUrl = 'https://accounts.google.com/o/oauth2/token'
   var peopleApiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect'
   var params = {
@@ -87,8 +63,7 @@ router.post('/auth/google', function (req, res) {
             }
           })
         })
-      }
-      else {
+      } else {
         // Create a new user account or return an existing one.
         User.findOne({ 'google.id': profile.sub }, function (err, existingUser) {
           if (err) {
