@@ -38,6 +38,7 @@ var router = express.Router()
 
 router.use('/videos', require('./routes/videos.js'))
 router.use('/users', require('./routes/users.js'))
+router.use('/cdrs', require('./routes/cdrs.js'))
 
 router.get('/', function (req, res) {
   res.json({ message: 'API' })

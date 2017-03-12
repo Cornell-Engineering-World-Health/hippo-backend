@@ -162,6 +162,8 @@ router.get('/:video_name', function (req, res) {
  *   delete:
  *     tags: [Session]
  *     description: Deletes a Single Session
+ *     consumes:
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
@@ -170,18 +172,23 @@ router.get('/:video_name', function (req, res) {
  *         in: path
  *         required: true
  *         type: string
+ *       - name: CDRInfo
+ *         description: Information About Call
+ *         in: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/CDR'
  *     responses:
  *       200:
  *         description: A single session deleted.
  *         schema:
- *           $ref: '#/definitions/deleteSuccessMessage'
+ *           $ref: '#/definitions/deleteResponse'
  *       500:
  *         description: Internal Server Error
  *         schema:
  *           $ref: '#/definitions/Error'
  *
  */
-
 router.delete('/:video_name', function (req, res) {
   Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
     if (err) {
@@ -195,13 +202,10 @@ router.delete('/:video_name', function (req, res) {
       var cdr = new CDR()
       cdr.creationTime = new Date(req.body.creationTime)
       cdr.destroyTime = new Date(req.body.destroyTime)
-      cdr.callDuration = req.body.destroyTime.valueOf() - req.body.creationTime.valueOf()
+      cdr.callDuration = req.body.destroyTime - req.body.creationTime
       cdr.disconnectReason = req.body.disconnectReason
       cdr.hasVideo = req.body.hasVideo
-      cdr.participants = new Array(req.body.participants.length)
-      for(var i=0; i<req.body.participants.length; i++){
-        cdr.participants[i] = req.body.participants[i]
-      }
+      cdr.participantsId = req.body.participantsId
       
       cdr.save(function(err, cdrInfos){
         if (err) {

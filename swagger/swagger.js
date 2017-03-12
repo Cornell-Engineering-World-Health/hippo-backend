@@ -1,4 +1,4 @@
-var swaggerJSDoc = require('swagger-jsdoc')
+ var swaggerJSDoc = require('swagger-jsdoc')
 
 // swagger definition
 var swaggerDefinition = {
@@ -21,7 +21,6 @@ var swaggerDefinition = {
   basePath: '/api',
   definitions: {
     'newSession': {
-      'required': ['message', 'data'],
       'properties': {
         'message': {
           'type': 'string'
@@ -49,7 +48,6 @@ var swaggerDefinition = {
       }
     },
     'Error': {
-      'required': ['code', 'detail'],
       'properties': {
         'code': {
           'type': 'string'
@@ -60,7 +58,6 @@ var swaggerDefinition = {
       }
     },
     'SessionWithToken': {
-      'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
       'properties': {
         '_id': {
           'type': 'string'
@@ -79,16 +76,7 @@ var swaggerDefinition = {
         }
       }
     },
-    'SessionName': {
-      'required': ['name'],
-      'properties': {
-        'name': {
-          'type': 'string'
-        }
-      }
-    },
     'Session': {
-      'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
       'properties': {
         '_id': {
           'type': 'string'
@@ -148,14 +136,96 @@ var swaggerDefinition = {
         }
       }
     },
-    'deleteSuccessMessage': {
-      'required': ['message', 'name'],
+    'deleteResponse': {
       'properties': {
         'message': {
           'type': 'string'
         },
         'name': {
           'type': 'string'
+        },
+        'cdrInfo': {
+          'type': 'object',
+          'properties': {
+            '_v': {
+              'type': 'integer'
+            },
+            'hasVideo': {
+              'type': 'boolean'
+            },
+            'disconnectReason': {
+              'type': 'string'
+            },
+            'callDuration':{
+              'type':'number'
+            },
+            'destroyTime': {
+              'type': 'string'
+            },
+            'creationTime': {
+              'type': 'string'
+            },
+            '_id': {
+              'type': 'string'
+            },
+            'participantsId': {
+              'type': 'integer'
+            }
+          }
+        }
+      }
+    },
+    'CDR': {
+      'required': ['creationTime', 'destroyTime', 'disconnectReason', 'hasVideo', 'participantsId'],
+      'properties': {
+        'creationTime': {
+          'type': 'integer'
+        },
+        'destroyTime': {
+          'type': 'integer'
+        },
+        'disconnectReason': {
+          'type': 'string'
+        },
+        'hasVideo': {
+          'type': 'boolean'
+        },
+        'participantsId': {
+          'type': 'array',
+          'items': {
+            'type': 'integer'
+          }
+        }
+      }
+    },
+    'CdrResponse': {
+      'properties': {
+        '_id': {
+          'type': 'string'
+        },
+        'hasVideo': {
+          'type': 'boolean'
+        },
+        'disconnectReason': {
+          'type': 'string'
+        },
+        'callDuration': {
+          'type': 'integer'
+        },
+        'destroyTime': {
+          'type': 'string'
+        },
+        'creationTime': {
+          'type': 'string'
+        },
+        '_v': {
+          'type': 'integer'
+        },
+        'participantsId': {
+          'type': 'array',
+          'items': {
+            'type': 'integer'
+          }
         }
       }
     }
