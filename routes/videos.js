@@ -75,12 +75,44 @@ router.post('/', function (req, res) {
   })
 })
 
+// ROUTE - get all sessions
+/**
+ * @swagger
+ * /videos:
+ *   get:
+ *     description: Get all Sessions.
+ *     tags: [Session]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Sessions successfully returned.
+ *         schema:
+ *           type: array
+ *           items:
+ *            $ref: '#/definitions/Session'
+ *       500:
+ *         description: 500 Internal Server Error
+ *         schema:
+ *           type: object
+ *           $ref: '#/definitions/Error'
+ */
+router.get('/', function (req, res) {
+  Videocall.find(function (err, videos) {
+    if (err) {
+      res.status(500).json(Errors.INTERNAL_READ(err))
+      return
+    }
+    res.json(videos)
+  })
+})
+
 // ROUTE - takes a code, and returns session and token
 /**
  * @swagger
  * /videos/{video_name}:
  *   get:
- *     tags: [Session]
+ *     tags:   [Session]
  *     description: Returns a Single Session
  *     produces:
  *       - application/json
@@ -94,7 +126,7 @@ router.post('/', function (req, res) {
  *       200:
  *         description: A single session returned
  *         schema:
- *           $ref: '#/definitions/Session'
+ *           $ref: '#/definitions/SessionWithToken'
  *       500:
  *         description: Internal Server Error
  *         schema:
@@ -106,10 +138,10 @@ router.get('/:video_name', function (req, res) {
   .populate('participants')
   .exec(function (err, video) {
     if (err) {
-      res.status(500).json(Errors.INTERNAL_READ(err))
+      return res.status(500).json(Errors.INTERNAL_READ(err))
     }
     if (video == null) {
-      res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
+      return res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
     } else {
       var tokenOptions = {}
       tokenOptions.role = 'publisher'
@@ -147,19 +179,23 @@ router.get('/:video_name', function (req, res) {
  *         description: Internal Server Error
  *         schema:
  *           $ref: '#/definitions/Error'
+ *
  */
 
 router.delete('/:video_name', function (req, res) {
   Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
     if (err) {
-      res.status(500).json(Errors.INTERNAL_READ(err))
-      return
+      return res.status(500).json(Errors.INTERNAL_READ(err))
     }
     if (video == null) {
-      res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
+      return res.json({
+        message: 'Session with name: \'' + req.params.video_name + '\' was not found in the database. ' +
+                  'It may have already been deleted',
+        name: req.params.video_name
+      })
     } else {
       res.json({
-        message: 'session with code: \'' + req.params.video_name + '\' has been deleted.',
+        message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
         name: req.params.video_name
       })
     }
