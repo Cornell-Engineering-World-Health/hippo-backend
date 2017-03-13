@@ -1,9 +1,13 @@
 require('dotenv').config()
 var express = require('express')
 var bodyParser = require('body-parser')
+var cors = require('cors')
+
 var path = require('path')
 
 var app = express()
+
+var auth = require('./services/auth')
 
 // initialize swagger-jsdoc
 var swaggerSpec = require('./swagger/swagger.js')
@@ -14,18 +18,14 @@ app.get('/swagger.json', function (req, res) {
   res.send(swaggerSpec)
 })
 
+app.options('*', cors())
+app.use(cors())
+
 app.use(bodyParser.urlencoded({
   extended: true
 }))
 
 app.use(bodyParser.json())
-
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'PATCH, POST, GET, PUT, DELETE, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
-})
 
 var port = process.env.PORT || 3000
 
@@ -37,6 +37,8 @@ app.get('/', function (req, res) {
 
 var router = express.Router()
 
+router.use(auth.ensureAuthenticated)
+
 router.use('/videos', require('./routes/videos.js'))
 router.use('/users', require('./routes/users.js'))
 
@@ -44,6 +46,7 @@ router.get('/', function (req, res) {
   res.json({ message: 'API' })
 })
 
+app.use('/auth', require('./routes/auth.js'))
 app.use('/api', router)
 
 // Start the server

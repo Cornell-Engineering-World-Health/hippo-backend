@@ -5,11 +5,21 @@ var chaiHttp = require('chai-http')
 var should = chai.should()
 var User = require('../../models/user')
 var UsersResource = require('../resources/usersResource')
-var server = require('../../app')
+var sinon = require('sinon')
 chai.use(chaiHttp)
 
 describe('Users', function () {
+  var server
+  var auth
+  var ensureAuthenticatedSpy
+
   before(function (done) {
+    auth = require('../../services/auth')
+    ensureAuthenticatedSpy = sinon.stub(auth, 'ensureAuthenticated', function (res, req, next) {
+      return next()
+    })
+    server = require('../../app')
+
     User.find({}).remove(function () {
       done()
     })
@@ -19,7 +29,10 @@ describe('Users', function () {
       done()
     })
   })
-
+  after(function (done) {
+    ensureAuthenticatedSpy.restore()
+    done()
+  })
   it('should create a User on /users POST', function (done) {
     chai.request(server)
       .post('/api/users')
@@ -29,6 +42,7 @@ describe('Users', function () {
         email: 'frank.chan@company.com'
       })
       .end(function (err, res) {
+        console.log(err)
         should.not.exist(err)
         res.should.have.status(200)
         res.should.be.json
