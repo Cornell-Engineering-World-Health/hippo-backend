@@ -4,39 +4,41 @@
   var User = require('../models/user')
   var Videocall = require('../models/videocall')
 
-  var currentlyConnected = {}; //hash table
+  var currentlyConnected = {} // hash table
+  // connect the user names with id if cannot change id with another emit
 
-  // User connected
+  // New user has sent their info
   io.on('connection', function (clientSocket) {
     // add this user to all of their perspective rooms
     // users are distinguished by username
-    User.findOne({ email : clientSocket.id }, function(err, user) {
-      if(err) {
-        //Invalid user name
-      }
-      else {
-        Videocall.find({ participants : { $all : user } }, function(err, calls) {
-          if(err) {
-            //user is not in any call yet
-          }
-          else {
-            //Add the user to all of their rooms
-            for(var i = 0; i < calls.size; i++)
-            {
-              clientSocket.join(calls[i].name, null)
+    clientSocket.on('', function (data) {
+      User.findOne({ email: data.email }, function (err, user) {
+        if (err) {
+          // Invalid user name
+        } else {
+          Videocall.find({ participants: { $all: user } }, function (err, calls) {
+            if (err) {
+              // user is not in any call yet
+            } else {
+              // Add the user to all of their rooms
+              for (var i = 0; i < calls.size; i++) {
+                clientSocket.join(calls[i].name, null)
+              }
             }
-          }
-        })
-      }
-    })
+          })
+        }
+      })
 
-    currentlyConnected[clientSocket.id] = clientSocket;
+      currentlyConnected[data.clientEmail] = clientSocket
+    })
   })
 
   // User disconnected
   io.on('connection', function (clientSocket) {
     // remove this user from the list of currently connected
-    delete currentlyConnected[clientSocket.id]
+    for (var i = 0; i < currentlyConnected.size; i++) {
+      if (currentlyConnected[i] === clientSocket) { delete currentlyConnected[i] }
+    }
   })
 
   // Creating a new room when a new session is created
@@ -45,8 +47,8 @@
     io.of(name)
 
     // add all participants in this call to the room
-    for(var i = 0; i < participants.length; i++) {
-      currentlyConnected[participants[i]].join(name, null)
+    for (var i = 0; i < participants.length; i++) {
+      currentlyConnected[participants[i]].socket.join(name, null)
     }
   }
 
@@ -55,5 +57,5 @@
   function alertSessionConnection (name, joiner) {
     // broadcast to all of the users in the namespace 'name' that 'joiner' has
     // joined the call
-    currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner : joiner })
+    currentlyConnected[joiner].socket.to(name).emit('user-has-connected', { joiner: joiner })
   }
