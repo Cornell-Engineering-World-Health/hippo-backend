@@ -151,6 +151,10 @@
       var token = opentok.generateToken(video.sessionId, tokenOptions)
       video = video.toObject()
       video.tokenId = token
+
+      // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
+      socketService.alertSessionConnection(video.name, video.participants[0].email)
+
       res.json(video)
     }
   })
@@ -276,8 +280,7 @@
                 video = video.toObject()
                 video.tokenId = token
 
-                // Socket.io
-                // var new_session = io.of(name)
+                // Socket.io notification setup
                 socketService.createNewRoom(name, video.participants)
 
                 res.json({ message: 'Calling user', data: video })
