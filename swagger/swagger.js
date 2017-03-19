@@ -19,6 +19,13 @@ var swaggerDefinition = {
   },
   host: process.env.BASE_URL,
   basePath: '/api',
+  securityDefinition: {
+    bearer: {
+      type: 'apiKey',
+      name: 'Authorization',
+      in: 'header'
+    }
+  },
   definitions: {
     'newSession': {
       'required': ['message', 'data'],
