@@ -6,21 +6,15 @@ var Errors = require('../resources/errors')
 // ROUTE - takes a code, and returns session and token
 /**
  * @swagger
- * /users/{user_id}:
+ * /self:
  *   get:
  *     tags: [Users]
- *     description: Returns a Single User based on userId
+ *     description: Returns a Single User object for the Authenticated User
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: user_id
- *         description: User's unique id nummber
- *         in: path
- *         required: true
- *         type: string
  *     responses:
  *       200:
- *         description: A single user returned
+ *         description: Authenticated user info is returned, including all calls
  *         schema:
  *           $ref: '#/definitions/UserResponse'
  *       500:
@@ -28,9 +22,10 @@ var Errors = require('../resources/errors')
  *         schema:
  *           $ref: '#/definitions/Error'
  */
-router.get('/:user_id', function (req, res) {
+router.get('/', function (req, res) {
   User
-  .findOne({ userId: req.params.user_id })
+  .findOne({ userId: req.user.userId })
+  .populate('contacts calls')
   .exec(function (err, user) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_READ(err))
@@ -38,13 +33,7 @@ router.get('/:user_id', function (req, res) {
     if (user == null) {
       return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
     }
-    // Return a limited scope of the user's actual information
-    res.json({
-      userId: user.userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email
-    })
+    res.json(user)
   })
 })
 
