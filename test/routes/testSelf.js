@@ -8,14 +8,15 @@ var UsersResource = require('../resources/usersResource')
 var sinon = require('sinon')
 chai.use(chaiHttp)
 
-describe('Users', function () {
+describe('Self', function () {
   var server
   var auth
   var ensureAuthenticatedSpy
 
   before(function (done) {
     auth = require('../../services/auth')
-    ensureAuthenticatedSpy = sinon.stub(auth, 'ensureAuthenticated', function (res, req, next) {
+    ensureAuthenticatedSpy = sinon.stub(auth, 'ensureAuthenticated', function (req, res, next) {
+      req.user = UsersResource.newTestUser(UsersResource.testUser3)
       return next()
     })
     server = require('../../app')
@@ -33,12 +34,12 @@ describe('Users', function () {
     ensureAuthenticatedSpy.restore()
     done()
   })
-  it('should get a SINGLE User on /users/:user_id GET', function (done) {
-    var testUser = UsersResource.newTestUser(UsersResource.testUser1)
+  it('should get a SINGLE User on /self GET', function (done) {
+    var testUser = UsersResource.newTestUser(UsersResource.testUser3)
     testUser.save(function (err, data) {
       should.not.exist(err)
       chai.request(server)
-        .get('/api/users/' + data.userId)
+        .get('/api/self')
         .end(function (err, res) {
           should.not.exist(err)
           res.should.have.status(200)
@@ -48,17 +49,9 @@ describe('Users', function () {
           res.body.should.have.property('firstName')
           res.body.should.have.property('lastName')
           res.body.should.have.property('email')
+          res.body.should.have.property('_id')
           done()
         })
     })
-  })
-  it('should return 404 Not found when User with userID not found on /users/:user_id GET', function (done) {
-    chai.request(server)
-      .get('/api/users/99999')
-      .end(function (err, res) {
-        should.exist(err)
-        res.should.have.status(404)
-        done()
-      })
   })
 })
