@@ -43,6 +43,7 @@
 
   // Creating a new room when a new session is created
   // Rooms can only be connected to on the server side
+  /* eslint-disable no-use-before-define */
   function createNewRoom (name, participants) {
     io.of(name)
 
@@ -59,3 +60,4 @@
     // joined the call
     currentlyConnected[joiner].socket.to(name).emit('user-has-connected', { joiner: joiner })
   }
+  /* eslint-enable no-use-before-define http://standardjs.com/#how-do-i-hide-a-certain-warning*/
