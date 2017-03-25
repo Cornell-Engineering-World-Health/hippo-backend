@@ -3,3 +3,9 @@ OPENTOK_SECRET_KEY=aafd067184ed09d50dd472d8808afb733568599b
 BASE_URL=http://localhost:3000
 
 DB_MONGODB_URL=mongodb://localhost:27017/hippo
+
+GOOGLE_AUTH_CLIENT_ID=client_id_here
+GOOGLE_AUTH_SECRET_KEY=secret_key_here
+GOOGLE_AUTH_CALLBACK_URL=http://localhost:3000/auth/google/callback
+
+JWT_SECRET=secret_token_here
