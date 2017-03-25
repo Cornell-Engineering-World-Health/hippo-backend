@@ -20,6 +20,13 @@ var errors = {
       error: err
     }
   },
+  INTERNAL_DB: function (err) {
+    return {
+      code: '500 Internal Server Error',
+      detail: 'Internal Mongoose error while using the database.',
+      error: err
+    }
+  },
   USER_NOT_FOUND: function (id) {
     return {
       code: '404 Not Found',

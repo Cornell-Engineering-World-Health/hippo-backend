@@ -8,7 +8,7 @@ var Errors = require('../resources/errors')
  * @swagger
  * /self:
  *   get:
- *     tags: [Users]
+ *     tags: [Self]
  *     description: Returns a Single User object for the Authenticated User
  *     produces:
  *       - application/json

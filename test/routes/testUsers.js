@@ -15,7 +15,8 @@ describe('Users', function () {
 
   before(function (done) {
     auth = require('../../services/auth')
-    ensureAuthenticatedSpy = sinon.stub(auth, 'ensureAuthenticated', function (res, req, next) {
+    ensureAuthenticatedSpy = sinon.stub(auth, 'ensureAuthenticated', function (req, res, next) {
+      req.user = UsersResource.newTestUser(UsersResource.testUser3)
       return next()
     })
     server = require('../../app')
@@ -50,6 +51,31 @@ describe('Users', function () {
           res.body.should.have.property('email')
           done()
         })
+    })
+  })
+  it('should get ALL Users on /users GET', function (done) {
+    var testUser = UsersResource.newTestUser(UsersResource.testUser1)
+    var testUser2 = UsersResource.newTestUser(UsersResource.testUser2)
+    testUser.save(function (err, data) {
+      should.not.exist(err)
+      testUser2.save(function (err, data) {
+        should.not.exist(err)
+        chai.request(server)
+          .get('/api/users/')
+          .end(function (err, res) {
+            should.not.exist(err)
+            res.should.have.status(200)
+            res.should.be.json
+            res.body.should.be.a('object')
+            res.body.should.have.property('users')
+            res.body.users.length.should.equal(2)
+            res.body.users[0].should.have.property('userId')
+            res.body.users[0].should.have.property('firstName')
+            res.body.users[0].should.have.property('lastName')
+            res.body.users[0].should.have.property('email')
+            done()
+          })
+      })
     })
   })
   it('should return 404 Not found when User with userID not found on /users/:user_id GET', function (done) {

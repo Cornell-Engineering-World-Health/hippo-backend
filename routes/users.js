@@ -6,6 +6,46 @@ var Errors = require('../resources/errors')
 // ROUTE - takes a code, and returns session and token
 /**
  * @swagger
+ * /users:
+ *   get:
+ *     tags: [Users]
+ *     description: Returns a Single User based on userId
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: A single user returned
+ *         schema:
+ *           $ref: '#/definitions/UserResponse'
+ *       500:
+ *         description: Internal Server Error
+ *         schema:
+ *           $ref: '#/definitions/Error'
+ */
+router.get('/', function (req, res) {
+  User
+  .find({ })
+  .exec(function (err, users) {
+    if (err) {
+      return res.status(500).json(Errors.INTERNAL_READ(err))
+    }
+    // Return a limited scope of the user's actual information
+    var userList = []
+    for (var user of users) {
+      userList.push({
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      })
+    }
+    res.json({ users: userList })
+  })
+})
+
+// ROUTE - takes a code, and returns session and token
+/**
+ * @swagger
  * /users/{user_id}:
  *   get:
  *     tags: [Users]
