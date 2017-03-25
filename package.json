@@ -32,5 +32,20 @@
     "ignore": [
       "public/*"
     ]
-  }
+  },
+  "description": "HIPAA compliant REST API for creating and managing video sessions.",
+  "version": "1.0.0",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cornell-Engineering-World-Health/hippo-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cornell-Engineering-World-Health/hippo-backend/issues"
+  },
+  "homepage": "https://github.com/Cornell-Engineering-World-Health/hippo-backend#readme"
 }

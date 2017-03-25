@@ -6,11 +6,13 @@
   var Videocall = require('../models/videocall')
   var videoServices = require('../services/videos')
 
-  var socketService = require('../services/socketService')
+  //var socketService = require('../services/socketService')
 
   var User = require('../models/user')
 
   var Errors = require('../resources/errors')
+
+  //console.log(router.socketService.test)
 // ROUTE - create a session, return session and token
 /**
  * @swagger
@@ -153,7 +155,7 @@
       video.tokenId = token
 
       // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
-      socketService.alertSessionConnection(video.name, video.participants[0].email)
+      req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
 
       res.json(video)
     }
@@ -281,7 +283,7 @@
                 video.tokenId = token
 
                 // Socket.io notification setup
-                socketService.createNewRoom(name, video.participants)
+                req.app.get('socketService').createNewRoom(name, video.participants)
 
                 res.json({ message: 'Calling user', data: video })
               })

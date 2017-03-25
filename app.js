@@ -41,6 +41,7 @@ app.get('/', function (req, res) {
 var router = express.Router()
 
 router.use('/videos', require('./routes/videos.js'))
+//app.post('/videos', socketService)
 router.use('/users', require('./routes/users.js'))
 
 router.get('/', function (req, res) {
@@ -50,7 +51,9 @@ router.get('/', function (req, res) {
 app.use('/api', router)
 
 // Start the server
-app.listen(port)
+var io = require('socket.io').listen(app.listen(port))
+var socketService = require('./services/socketService')(io)
+app.set('socketService', socketService)
 
 console.log('Server running on port ' + port)
 
