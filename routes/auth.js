@@ -5,6 +5,7 @@ var moment = require('moment')
 var request = require('request')
 
 var User = require('../models/user')
+var Errors = require('../resources/errors')
 
 // Generate JSON Web Token
 function createJWT (user) {
