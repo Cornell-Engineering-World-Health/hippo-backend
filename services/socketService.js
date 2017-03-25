@@ -1,26 +1,20 @@
 module.exports = function(io) {
 
-  //var express = require('express')
-  //var app = require('../app.js')
-  //var io = GLOBAL.io
   var User = require('../models/user')
   var Videocall = require('../models/videocall')
 
-  var currentlyConnected = {} // hash table
+  var currentlyConnected = {} // associative array
 
   test = 'hi'
-  // connect the user names with id if cannot change id with another emit
-  console.log('setup')
 
   // New user has sent their info
   io.on('connection', function (clientSocket) {
-    console.log('got connection')
     // add this user to all of their perspective rooms
     // users are distinguished by username
     clientSocket.emit('confirmation', {msg : 'it worked'})
 
     clientSocket.on('user-online', function (data) {
-      console.log(data.email)
+      //console.log(data.email)
       User.findOne({ email: data.email }, function (err, user) {
         if (err) {
           // Invalid user name
@@ -38,16 +32,23 @@ module.exports = function(io) {
         }
       })
 
-      currentlyConnected[data.clientEmail] = clientSocket
+      currentlyConnected[data.email] = clientSocket
+      console.log('adding ' + data.email)
+      console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
-  })
 
-  // User disconnected
-  io.on('connection', function (clientSocket) {
-    // remove this user from the list of currently connected
-    for (var i = 0; i < currentlyConnected.size; i++) {
-      if (currentlyConnected[i] === clientSocket) { delete currentlyConnected[i] }
-    }
+    // User disconnected
+    clientSocket.on('disconnect', function (data) {
+      // remove this user from the list of currently connected
+      for (var key in currentlyConnected) {
+        if (currentlyConnected[key] === clientSocket)
+        {
+          console.log('removing ' + key)
+          delete currentlyConnected[key]
+        }
+      }
+      console.log('currently connected: ' + Object.keys(currentlyConnected).length)
+    })
   })
 
   // Creating a new room when a new session is created
@@ -60,6 +61,11 @@ module.exports = function(io) {
     for (var i = 0; i < participants.length; i++) {
       currentlyConnected[participants[i]].socket.join(name, null)
     }
+  }
+
+  deleteRoom = function (name) {
+    console.log('deleting a room')
+    io.sockets.in(name).leave(name)
   }
 
   // Alerting all users in a session when someone joins the call

@@ -6,13 +6,10 @@
   var Videocall = require('../models/videocall')
   var videoServices = require('../services/videos')
 
-  //var socketService = require('../services/socketService')
-
   var User = require('../models/user')
 
   var Errors = require('../resources/errors')
 
-  //console.log(router.socketService.test)
 // ROUTE - create a session, return session and token
 /**
  * @swagger
@@ -198,6 +195,10 @@
       if (video == null) {
         res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
       } else {
+
+        // Delete the socket room
+        req.app.get('socketService').deleteRoom(video.name)
+
         res.json({
           message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
           name: req.params.video_name
