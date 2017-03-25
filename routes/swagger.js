@@ -17,15 +17,28 @@ function createJWT (user) {
 }
 
 router.get('/auth', function (req, res) {
-  User.find({ }, function (err, users) {
+  User.findOne({ 'google.id': 8378 }, function (err, user) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_OAUTH(err))
     }
-    if (users.length === 0) {
-      return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
+    if (user == null) {
+      var user = new User()
+      user.google.id = 8378
+      user.firstName = "Test"
+      user.lastName = "User"
+      user.email = "testuser@testing.com"
+      user.calls = []
+      user.contacts = []
+      user.save(function (err, user) {
+        if (err) {
+          return res.status(500).json(Errors.INTERNAL_OAUTH(err))
+        }
+        var token = createJWT(user)
+        return res.send({ token: token })
+      })
     }
-    var token = createJWT(users[0])
-    res.send({ token: token })
+    var token = createJWT(user)
+    return res.send({ token: token })
   })
 })
 

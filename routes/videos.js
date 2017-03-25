@@ -204,7 +204,7 @@
         video.tokenId = token
 
         // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
-        //req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
+        // req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
 
         res.json(video)
       }
@@ -237,27 +237,28 @@
  *           $ref: '#/definitions/Error'
  *
  */
-router.delete('/:video_name', function (req, res) {
-  Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
-    if (err) {
-      return res.status(500).json(Errors.INTERNAL_READ(err))
-    }
-    if (video == null) {
-      return res.json({
-        message: 'Session with name: \'' + req.params.video_name + '\' was not found in the database. ' +
+  router.delete('/:video_name', function (req, res) {
+    Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
+      if (err) {
+        return res.status(500).json(Errors.INTERNAL_READ(err))
+      }
+      if (video == null) {
+        return res.json({
+          message: 'Session with name: \'' + req.params.video_name + '\' was not found in the database. ' +
                   'It may have already been deleted',
-        name: req.params.video_name
-      })
-    } else {
+          name: req.params.video_name
+        })
+      } else {
       // Delete the socket room
-      req.app.get('socketService').deleteRoom(video.name)
+        console.log(req.app.get('socketService').deleteRoom)
+        req.app.get('socketService').deleteRoom(video.name)
 
-      res.json({
-        message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
-        name: req.params.video_name
-      })
-    }
+        res.json({
+          message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
+          name: req.params.video_name
+        })
+      }
+    })
   })
-})
 
-module.exports = router
+  module.exports = router
