@@ -1,21 +1,18 @@
-module.exports = function(io) {
-
+module.exports = function (io) {
   var User = require('../models/user')
   var Videocall = require('../models/videocall')
 
   var currentlyConnected = {} // associative array
 
-  test = 'hi'
-
   // New user has sent their info
   io.on('connection', function (clientSocket) {
     // add this user to all of their perspective rooms
     // users are distinguished by username
-    clientSocket.emit('confirmation', {msg : 'it worked'})
-    user_email = ''
+    clientSocket.emit('confirmation', {msg: 'it worked'})
+    var userEmail = ''
 
     clientSocket.on('user-online', function (data) {
-      //console.log(data.email)
+      // console.log(data.email)
       User.findOne({ email: data.email }, function (err, user) {
         if (err) {
           // Invalid user name
@@ -34,7 +31,7 @@ module.exports = function(io) {
       })
 
       currentlyConnected[data.email] = clientSocket
-      user_email = data.email
+      userEmail = data.email
       console.log('adding ' + data.email)
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
@@ -43,8 +40,7 @@ module.exports = function(io) {
     clientSocket.on('disconnect', function (data) {
       // remove this user from the list of currently connected
       for (var key in currentlyConnected) {
-        if (currentlyConnected[key] === clientSocket)
-        {
+        if (currentlyConnected[key] === clientSocket) {
           console.log('removing ' + key)
           delete currentlyConnected[key]
         }
@@ -54,7 +50,7 @@ module.exports = function(io) {
 
     clientSocket.on('sessionDisconnected', function (data) { console.log('sessionDisconnected') })
     clientSocket.on('sessionConnected', function (data) {
-      alertSessionConnection(data.sessionName, user_email)
+      alertSessionConnection(data.sessionName, userEmail)
       console.log('sessionConnected')
     })
     clientSocket.on('streamCreated', function (data) { console.log('streamCreated') })
@@ -69,9 +65,11 @@ module.exports = function(io) {
     clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
   })
 
+  /* eslint-disable */
+
   // Creating a new room when a new session is created
   // Rooms can only be connected to on the server side
-  createNewRoom = function (name, participants) {
+  var createNewRoom = function (name, participants) {
     console.log('creating a new room ' + name)
     io.of(name)
 
@@ -81,19 +79,20 @@ module.exports = function(io) {
     }
   }
 
-  deleteRoom = function (name) {
+  var deleteRoom = function (name) {
     console.log('deleting room ' + name)
     io.sockets.in(name).leave(name)
   }
 
   // Alerting all users in a session when someone joins the call
   // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
-  alertSessionConnection = function (name, joiner) {
+  var alertSessionConnection = function (name, joiner) {
     console.log('alerting a session')
     // broadcast to all of the users in the namespace 'name' that 'joiner' has
     // joined the call
     currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
   }
+  /* eslint-disable */
 
   return this
 }

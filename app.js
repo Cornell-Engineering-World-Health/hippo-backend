@@ -43,7 +43,7 @@ var router = express.Router()
 router.use(auth.ensureAuthenticated)
 
 router.use('/videos', require('./routes/videos.js'))
-//app.post('/videos', socketService)
+// app.post('/videos', socketService)
 router.use('/users', require('./routes/users.js'))
 router.use('/self', require('./routes/self.js'))
 

@@ -51,72 +51,78 @@
       if (err) {
         return res.status(500).json(Errors.INTERNAL_READ(err))
       }
-      video.name = name
-      video.sessionId = session.sessionId
-      video.datetime = Date.now()
-      if (req.body.startTime) {
-        video.startTime = req.body.startTime
-      } else {
-        video.startTime = Date.now()
-      }
-
-      if (req.body.endTime) {
-        video.endTime = req.body.endTime
-      } else {
-        var m = moment(video.startTime)
-        m.add(1, 'hours')
-        video.endTime = m.format()
-      }
-
-      var participants = []
-
-      if (!req.body.invitedUserIds) {
-        req.body.invitedUserIds = []
-      }
-
-      for (var userId of req.body.invitedUserIds) {
-        participants.push(User.findOne({ userId: userId }).exec())
-      }
-      Q.all(participants)
-      .then(function (users) {
-        video.participants = []
-        if (users.length > 0) {
-          for (var i = 0; i < users.length; i++) {
-            if (users[i] == null) {
-              return res.status(404).json(Errors.USER_NOT_FOUND(req.body.invitedUserIds[i]))
-            }
-            // User verified to exist
-            video.participants.push(users[i]._id)
-          }
-        }
-        video.participants.push(req.user._id)
-        return video.save()
-      })
-      .then(function (video) {
+      var video = new Videocall()
+      videoServices.generateChatName(function (err, name) {
         if (err) {
-          return res.status(500).json(Errors.INTERNAL_WRITE(err))
+          return res.status(500).json(Errors.INTERNAL_READ(err))
         }
-        // Populate participants of the call
-        video.populate('participants', function (err) {
-          if (err) {
-            return res.status(500).json(Errors.INTERNAL_READ(err))
-          }
-          // Generate a token
-          var tokenOptions = {}
-          tokenOptions.role = 'publisher'
-          var token = opentok.generateToken(session.sessionId, tokenOptions)
+        video.name = name
+        video.sessionId = session.sessionId
+        video.datetime = Date.now()
+        if (req.body.startTime) {
+          video.startTime = req.body.startTime
+        } else {
+          video.startTime = Date.now()
+        }
 
-          video = video.toObject()
-          video.tokenId = token
-          
-          req.app.get('socketService').createNewRoom(name, video.participants)
-          
-          res.json({ message: 'Calling user', data: video })
+        if (req.body.endTime) {
+          video.endTime = req.body.endTime
+        } else {
+          var m = moment(video.startTime)
+          m.add(1, 'hours')
+          video.endTime = m.format()
+        }
+
+        var participants = []
+
+        if (!req.body.invitedUserIds) {
+          req.body.invitedUserIds = []
+        }
+
+        for (var userId of req.body.invitedUserIds) {
+          participants.push(User.findOne({ userId: userId }).exec())
+        }
+        Q.all(participants)
+        .then(function (users) {
+          video.participants = []
+          if (users.length > 0) {
+            for (var i = 0; i < users.length; i++) {
+              if (users[i] == null) {
+                return res.status(404).json(Errors.USER_NOT_FOUND(req.body.invitedUserIds[i]))
+              }
+              // User verified to exist
+              video.participants.push(users[i]._id)
+            }
+          }
+          video.participants.push(req.user._id)
+          return video.save()
         })
-      })
-      .catch(function (err) {
-        console.log('Q catch err: ' + err)
-        return res.status(500).json(Errors.INTERNAL_DB(err))
+        .then(function (video) {
+          if (err) {
+            return res.status(500).json(Errors.INTERNAL_WRITE(err))
+          }
+          // Populate participants of the call
+          video.populate('participants', function (err) {
+            if (err) {
+              return res.status(500).json(Errors.INTERNAL_READ(err))
+            }
+            // Generate a token
+            var tokenOptions = {}
+            tokenOptions.role = 'publisher'
+            var token = opentok.generateToken(session.sessionId, tokenOptions)
+
+            video = video.toObject()
+            video.tokenId = token
+
+            req.app.get('socketService').createNewRoom(name, video.participants)
+
+            res.json({ message: 'Calling user', data: video })
+          })
+        })
+        .catch(function (err) {
+          console.log('Q catch err: ' + err)
+          return res.status(500).json(Errors.INTERNAL_DB(err))
+        })
       })
     })
   })
@@ -180,29 +186,29 @@
  */
   router.get('/:video_name', function (req, res) {
     Videocall
-  .findOne({ name: req.params.video_name })
-  .populate('participants')
-  .exec(function (err, video) {
-    if (err) {
-      return res.status(500).json(Errors.INTERNAL_READ(err))
-    }
-    if (video == null) {
-      return res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
-    } else {
-      var tokenOptions = {}
-      tokenOptions.role = 'publisher'
+    .findOne({ name: req.params.video_name })
+    .populate('participants')
+    .exec(function (err, video) {
+      if (err) {
+        return res.status(500).json(Errors.INTERNAL_READ(err))
+      }
+      if (video == null) {
+        return res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
+      } else {
+        var tokenOptions = {}
+        tokenOptions.role = 'publisher'
 
-      // Generate a token.
-      var token = opentok.generateToken(video.sessionId, tokenOptions)
-      video = video.toObject()
-      video.tokenId = token
+        // Generate a token.
+        var token = opentok.generateToken(video.sessionId, tokenOptions)
+        video = video.toObject()
+        video.tokenId = token
 
-      // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
-      //req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
+        // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
+        //req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
 
-      res.json(video)
-    }
-  })
+        res.json(video)
+      }
+    })
   })
 
 // ROUTE - takes a code, and deletes session
@@ -243,7 +249,6 @@ router.delete('/:video_name', function (req, res) {
         name: req.params.video_name
       })
     } else {
-
       // Delete the socket room
       req.app.get('socketService').deleteRoom(video.name)
 

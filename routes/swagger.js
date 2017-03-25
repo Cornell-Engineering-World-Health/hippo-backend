@@ -21,7 +21,7 @@ router.get('/auth', function (req, res) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_OAUTH(err))
     }
-    if (users.length == 0) {
+    if (users.length === 0) {
       return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
     }
     var token = createJWT(users[0])
