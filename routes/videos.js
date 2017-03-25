@@ -152,7 +152,7 @@
       video.tokenId = token
 
       // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
-      req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
+      //req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
 
       res.json(video)
     }
@@ -207,6 +207,7 @@ router.delete('/:video_name', function (req, res) {
       })
     }
   })
+})
 
 // ROUTE - takes a caller id of a user and a calling id and returns a new call
 /**

@@ -12,6 +12,7 @@ module.exports = function(io) {
     // add this user to all of their perspective rooms
     // users are distinguished by username
     clientSocket.emit('confirmation', {msg : 'it worked'})
+    user_email = ''
 
     clientSocket.on('user-online', function (data) {
       //console.log(data.email)
@@ -33,6 +34,7 @@ module.exports = function(io) {
       })
 
       currentlyConnected[data.email] = clientSocket
+      user_email = data.email
       console.log('adding ' + data.email)
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
@@ -49,6 +51,22 @@ module.exports = function(io) {
       }
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
+
+    clientSocket.on('sessionDisconnected', function (data) { console.log('sessionDisconnected') })
+    clientSocket.on('sessionConnected', function (data) {
+      alertSessionConnection(data.sessionName, user_email)
+      console.log('sessionConnected')
+    })
+    clientSocket.on('streamCreated', function (data) { console.log('streamCreated') })
+    clientSocket.on('frameRate', function (data) { console.log('frameRate') })
+    clientSocket.on('hasAudio', function (data) { console.log('hasAudio') })
+    clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
+    clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
+    clientSocket.on('videoType', function (data) { console.log('videoType') })
+    clientSocket.on('streamDestroyed', function (data) { console.log('streamDestroyed') })
+    clientSocket.on('hasAudio', function (data) { console.log('hasAudio') })
+    clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
+    clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
   })
 
   // Creating a new room when a new session is created
@@ -59,7 +77,7 @@ module.exports = function(io) {
 
     // add all participants in this call to the room
     for (var i in participants) {
-      currentlyConnected[participants[i].email].socket.join(name, null)
+      currentlyConnected[participants[i].email].join(name, null)
     }
   }
 
@@ -74,7 +92,7 @@ module.exports = function(io) {
     console.log('alerting a session')
     // broadcast to all of the users in the namespace 'name' that 'joiner' has
     // joined the call
-    currentlyConnected[joiner].socket.to(name).emit('user-has-connected', { joiner: joiner })
+    currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
   }
 
   return this
