@@ -1,17 +1,16 @@
-var express = require('express')
-var router = express.Router()
-var OpenTok = require('opentok')
-var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
+  var express = require('express')
+  var router = express.Router()
+  var OpenTok = require('opentok')
+  var opentok = new OpenTok(process.env.OPENTOK_KEY, process.env.OPENTOK_SECRET_KEY)
 
-var Videocall = require('../models/videocall')
-var videoServices = require('../services/videos')
+  var Videocall = require('../models/videocall')
+  var videoServices = require('../services/videos')
 
-var User = require('../models/user')
+  var User = require('../models/user')
+  var Errors = require('../resources/errors')
+  var moment = require('moment')
 
-var Errors = require('../resources/errors')
-var moment = require('moment')
-
-var Q = require('q')
+  var Q = require('q')
 
 // ROUTE - create a session, return session and token
 /**
@@ -46,15 +45,9 @@ var Q = require('q')
  *           type: object
  *           $ref: '#/definitions/Error'
  */
-router.post('/', function (req, res) {
+  router.post('/', function (req, res) {
   // create sessionId
-  opentok.createSession(function (err, session) {
-    if (err) {
-      res.status(500).json(Errors.INTERNAL_OPENTOK(err))
-      return
-    }
-    var video = new Videocall()
-    videoServices.generateChatName(function (err, name) {
+    opentok.createSession(function (err, session) {
       if (err) {
         return res.status(500).json(Errors.INTERNAL_READ(err))
       }
@@ -115,6 +108,9 @@ router.post('/', function (req, res) {
 
           video = video.toObject()
           video.tokenId = token
+          
+          req.app.get('socketService').createNewRoom(name, video.participants)
+          
           res.json({ message: 'Calling user', data: video })
         })
       })
@@ -124,7 +120,6 @@ router.post('/', function (req, res) {
       })
     })
   })
-})
 
 // ROUTE - get all sessions
 /**
@@ -148,15 +143,15 @@ router.post('/', function (req, res) {
  *           type: object
  *           $ref: '#/definitions/Error'
  */
-router.get('/', function (req, res) {
-  Videocall.find(function (err, videos) {
-    if (err) {
-      res.status(500).json(Errors.INTERNAL_READ(err))
-      return
-    }
-    res.json(videos)
+  router.get('/', function (req, res) {
+    Videocall.find(function (err, videos) {
+      if (err) {
+        res.status(500).json(Errors.INTERNAL_READ(err))
+        return
+      }
+      res.json(videos)
+    })
   })
-})
 
 // ROUTE - takes a code, and returns session and token
 /**
@@ -183,8 +178,8 @@ router.get('/', function (req, res) {
  *         schema:
  *           $ref: '#/definitions/Error'
  */
-router.get('/:video_name', function (req, res) {
-  Videocall
+  router.get('/:video_name', function (req, res) {
+    Videocall
   .findOne({ name: req.params.video_name })
   .populate('participants')
   .exec(function (err, video) {
@@ -201,10 +196,14 @@ router.get('/:video_name', function (req, res) {
       var token = opentok.generateToken(video.sessionId, tokenOptions)
       video = video.toObject()
       video.tokenId = token
+
+      // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
+      //req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
+
       res.json(video)
     }
   })
-})
+  })
 
 // ROUTE - takes a code, and deletes session
 /**
@@ -244,6 +243,10 @@ router.delete('/:video_name', function (req, res) {
         name: req.params.video_name
       })
     } else {
+
+      // Delete the socket room
+      req.app.get('socketService').deleteRoom(video.name)
+
       res.json({
         message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
         name: req.params.video_name
