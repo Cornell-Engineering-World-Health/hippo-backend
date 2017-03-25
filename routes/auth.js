@@ -85,6 +85,7 @@ router.post('/google', function (req, res) {
               return res.status(500).json(Errors.INTERNAL_OAUTH(err))
             }
             var token = createJWT(user)
+            console.log(token)
             res.send({ token: token })
           })
         })

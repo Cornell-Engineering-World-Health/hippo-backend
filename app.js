@@ -49,6 +49,7 @@ router.get('/', function (req, res) {
 
 app.use('/auth', require('./routes/auth.js'))
 app.use('/api', router)
+app.use('/swagger', require('./routes/swagger.js'))
 
 // Start the server
 app.listen(port)
