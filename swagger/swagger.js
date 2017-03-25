@@ -78,13 +78,15 @@ var swaggerDefinition = {
           'type': 'array',
           'items': {
             'type': 'integer'
-          },
-          'startTime': {
-            'type': 'dateTime'
-          },
-          'endTime': {
-            'type': 'dateTime'
           }
+        },
+        'startTime': {
+          'type': 'string',
+          'format': 'date-time'
+        },
+        'endTime': {
+          'type': 'string',
+          'format': 'date-time'
         }
       }
     },
