@@ -3,50 +3,43 @@ var router = express.Router()
 var User = require('../models/user')
 var Errors = require('../resources/errors')
 
-// ROUTE - create a session, return session and token
+// ROUTE - takes a code, and returns session and token
 /**
  * @swagger
  * /users:
- *   post:
- *     description: Creates a User with an auto-incremented user id
+ *   get:
  *     tags: [Users]
- *     consumes:
- *       - application/json
+ *     description: Returns a Single User based on userId
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: body
- *         description: Basuc user information
- *         in: body
- *         required: true
- *         type: string
- *         schema:
- *            $ref: '#/definitions/User'
  *     responses:
  *       200:
- *         description: User successfully created
+ *         description: A single user returned
  *         schema:
- *           type: object
  *           $ref: '#/definitions/UserResponse'
  *       500:
- *         description: 500 Internal Server Error
+ *         description: Internal Server Error
  *         schema:
- *           type: object
  *           $ref: '#/definitions/Error'
  */
-router.post('/', function (req, res) {
-  var user = new User()
-  user.firstName = req.body.firstName
-  user.lastName = req.body.lastName
-  user.email = req.body.email
-  user.calls = []
-  user.contacts = []
-
-  user.save(function (err) {
+router.get('/', function (req, res) {
+  User
+  .find({ })
+  .exec(function (err, users) {
     if (err) {
-      return res.status(500).json(Errors.INTERNAL_WRITE(err))
+      return res.status(500).json(Errors.INTERNAL_READ(err))
     }
-    res.json({ message: 'New user added!', data: user })
+    // Return a limited scope of the user's actual information
+    var userList = []
+    for (var user of users) {
+      userList.push({
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      })
+    }
+    res.json({ users: userList })
   })
 })
 
@@ -78,7 +71,6 @@ router.post('/', function (req, res) {
 router.get('/:user_id', function (req, res) {
   User
   .findOne({ userId: req.params.user_id })
-  .populate('contacts calls')
   .exec(function (err, user) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_READ(err))
@@ -86,7 +78,13 @@ router.get('/:user_id', function (req, res) {
     if (user == null) {
       return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
     }
-    res.json(user)
+    // Return a limited scope of the user's actual information
+    res.json({
+      userId: user.userId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email
+    })
   })
 })
 

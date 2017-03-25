@@ -41,6 +41,7 @@ router.use(auth.ensureAuthenticated)
 
 router.use('/videos', require('./routes/videos.js'))
 router.use('/users', require('./routes/users.js'))
+router.use('/self', require('./routes/self.js'))
 
 router.get('/', function (req, res) {
   res.json({ message: 'API' })
