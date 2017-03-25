@@ -27,45 +27,6 @@ var swaggerDefinition = {
     }
   },
   definitions: {
-    'newSession': {
-      'required': ['message', 'data'],
-      'properties': {
-        'message': {
-          'type': 'string'
-        },
-        'data': {
-          'type': 'object',
-          'properties': {
-            '_v': {
-              'type': 'integer'
-            },
-            'sessionId': {
-              'type': 'string'
-            },
-            'name': {
-              'type': 'string'
-            },
-            '_id': {
-              'type': 'string'
-            },
-            'tokenId': {
-              'type': 'string'
-            }
-          }
-        }
-      }
-    },
-    'Error': {
-      'required': ['code', 'detail'],
-      'properties': {
-        'code': {
-          'type': 'string'
-        },
-        'detail': {
-          'type': 'string'
-        }
-      }
-    },
     'SessionWithToken': {
       'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
       'properties': {
@@ -108,6 +69,61 @@ var swaggerDefinition = {
         },
         '_v': {
           'type': 'integer'
+        }
+      }
+    },
+    'SessionParams': {
+      'properties': {
+        'invitedUserIds': {
+          'type': 'array',
+          'items': {
+            'type': 'integer'
+          },
+          'startTime': {
+            'type': 'dateTime'
+          },
+          'endTime': {
+            'type': 'dateTime'
+          }
+        }
+      }
+    },
+    'newSession': {
+      'required': ['message', 'data'],
+      'properties': {
+        'message': {
+          'type': 'string'
+        },
+        'data': {
+          'type': 'object',
+          'properties': {
+            '_v': {
+              'type': 'integer'
+            },
+            'sessionId': {
+              'type': 'string'
+            },
+            'name': {
+              'type': 'string'
+            },
+            '_id': {
+              'type': 'string'
+            },
+            'tokenId': {
+              'type': 'string'
+            }
+          }
+        }
+      }
+    },
+    'Error': {
+      'required': ['code', 'detail'],
+      'properties': {
+        'code': {
+          'type': 'string'
+        },
+        'detail': {
+          'type': 'string'
         }
       }
     },

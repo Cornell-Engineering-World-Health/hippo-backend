@@ -14,12 +14,24 @@ var testUser2 = {
   contacts: []
 }
 
+// This one has a unique user id
+var testUser3 = {
+  userId: '135134',
+  firstName: 'Sonia',
+  lastName: 'Appasamy',
+  email: 'sonia.appasamy@company.com',
+  contacts: []
+}
+
 var newTestUser = function (testUser) {
   var newUser = new User()
   newUser.firstName = testUser.firstName
   newUser.lastName = testUser.lastName
   newUser.email = testUser.email
   newUser.contacts = testUser.contacts
+  if (testUser.userId) {
+    newUser.userId = testUser.userId
+  }
 
   return newUser
 }
@@ -27,6 +39,7 @@ var newTestUser = function (testUser) {
 var userResource = {
   testUser1: testUser1,
   testUser2: testUser2,
+  testUser3: testUser3,
   newTestUser: newTestUser
 }
 
