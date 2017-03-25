@@ -1,6 +1,7 @@
 var moment = require('moment')
 var jwt = require('jwt-simple')
 var User = require('../models/user')
+var Errors = require('../resources/errors')
 
 // Login Required Middleware
 exports.ensureAuthenticated = function (req, res, next) {
@@ -23,6 +24,9 @@ exports.ensureAuthenticated = function (req, res, next) {
   }
   User.find({ 'google.id': payload.sub }, function (err, user) {
     if (err) {
+      return res.status(500).json(Errors.INTERNAL_READ(err))
+    }
+    if (user == null) {
       return res.status(404).send({ message:
         'Authenticated User not found in the database'
       })
