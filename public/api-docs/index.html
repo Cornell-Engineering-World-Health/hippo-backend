@@ -89,6 +89,11 @@
         }
       }
 
+      $.get('/swagger/auth', function(res) {
+        $('#input_apiKey')[0].value = res.token;
+        addApiKeyAuthorization();
+      })
+
       $('#input_apiKey').change(function() {
         addApiKeyAuthorization();
       });
