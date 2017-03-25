@@ -31,7 +31,7 @@ router.get('/', function (req, res) {
       return res.status(500).json(Errors.INTERNAL_READ(err))
     }
     if (user == null) {
-      return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
+      return res.status(404).json(Errors.USER_NOT_FOUND(req.user.userId))
     }
     res.json(user)
   })
