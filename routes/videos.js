@@ -17,7 +17,9 @@ var Q = require('q')
  * @swagger
  * /videos:
  *   post:
- *     description: Create a Session. Currently nothing required in body
+ *     description: |
+ *       Create a Session with a specified start time, end time, and invited participants.
+ *       Returns the video session with users invited and token for joining.
  *     tags: [Session]
  *     consumes:
  *       - application/json
@@ -29,6 +31,8 @@ var Q = require('q')
  *         in: body
  *         required: false
  *         type: string
+ *         schema:
+ *           $ref: '#/definitions/SessionParams'
  *     responses:
  *       200:
  *         description: Session successfully created
