@@ -45,6 +45,7 @@ router.use(auth.ensureAuthenticated)
 router.use('/videos', require('./routes/videos.js'))
 //app.post('/videos', socketService)
 router.use('/users', require('./routes/users.js'))
+router.use('/self', require('./routes/self.js'))
 
 router.get('/', function (req, res) {
   res.json({ message: 'API' })
@@ -52,6 +53,7 @@ router.get('/', function (req, res) {
 
 app.use('/auth', require('./routes/auth.js'))
 app.use('/api', router)
+app.use('/swagger', require('./routes/swagger.js'))
 
 // Start the server
 var io = require('socket.io').listen(app.listen(port))

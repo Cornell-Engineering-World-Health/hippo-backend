@@ -5,6 +5,7 @@ var moment = require('moment')
 var request = require('request')
 
 var User = require('../models/user')
+var Errors = require('../resources/errors')
 
 // Generate JSON Web Token
 function createJWT (user) {
@@ -30,7 +31,7 @@ router.post('/google', function (req, res) {
   // Exchange authorization code for access token.
   request.post(accessTokenUrl, { json: true, form: params }, function (err, response, token) {
     if (err) {
-      throw err
+      return res.status(500).json(Errors.INTERNAL_OAUTH(err))
     }
     var accessToken = token.access_token
     var headers = { Authorization: 'Bearer ' + accessToken }
@@ -38,7 +39,7 @@ router.post('/google', function (req, res) {
     // Retrieve profile information about the current user.
     request.get({ url: peopleApiUrl, headers: headers, json: true }, function (err, response, profile) {
       if (err) {
-        throw err
+        return res.status(500).json(Errors.INTERNAL_OAUTH(err))
       }
       if (profile.error) {
         return res.status(500).send({message: profile.error.message})
@@ -47,7 +48,7 @@ router.post('/google', function (req, res) {
       if (req.header('Authorization')) {
         User.findOne({ 'google.id': profile.sub }, function (err, existingUser) {
           if (err) {
-            throw err
+            return res.status(500).json(Errors.INTERNAL_OAUTH(err))
           }
           if (existingUser) {
             return res.status(409).send({ message: 'There is already a Google account that belongs to you' })
@@ -56,7 +57,7 @@ router.post('/google', function (req, res) {
           var payload = jwt.decode(token, process.env.JWT_SECRET)
           User.findById(payload.sub, function (err, user) {
             if (err) {
-              throw err
+              return res.status(500).json(Errors.INTERNAL_OAUTH(err))
             }
             if (!user) {
               return res.status(400).send({ message: 'User not found' })
@@ -67,7 +68,7 @@ router.post('/google', function (req, res) {
         // Create a new user account or return an existing one.
         User.findOne({ 'google.id': profile.sub }, function (err, existingUser) {
           if (err) {
-            throw err
+            return res.status(500).json(Errors.INTERNAL_OAUTH(err))
           }
           if (existingUser) {
             return res.send({ token: createJWT(existingUser) })
@@ -81,9 +82,10 @@ router.post('/google', function (req, res) {
           user.contacts = []
           user.save(function (err) {
             if (err) {
-              throw err
+              return res.status(500).json(Errors.INTERNAL_OAUTH(err))
             }
             var token = createJWT(user)
+            console.log(token)
             res.send({ token: token })
           })
         })
