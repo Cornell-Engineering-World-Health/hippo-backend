@@ -54,17 +54,17 @@ module.exports = function(io) {
   // Creating a new room when a new session is created
   // Rooms can only be connected to on the server side
   createNewRoom = function (name, participants) {
-    console.log('creating a new room')
+    console.log('creating a new room ' + name)
     io.of(name)
 
     // add all participants in this call to the room
-    for (var i = 0; i < participants.length; i++) {
-      currentlyConnected[participants[i]].socket.join(name, null)
+    for (var i in participants) {
+      currentlyConnected[participants[i].email].socket.join(name, null)
     }
   }
 
   deleteRoom = function (name) {
-    console.log('deleting a room')
+    console.log('deleting room ' + name)
     io.sockets.in(name).leave(name)
   }
 
