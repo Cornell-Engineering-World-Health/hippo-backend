@@ -9,6 +9,7 @@ var videoServices = require('../services/videos')
 var User = require('../models/user')
 
 var Errors = require('../resources/errors')
+var moment = require('moment')
 
 var Q = require('q')
 
@@ -60,6 +61,19 @@ router.post('/', function (req, res) {
       video.name = name
       video.sessionId = session.sessionId
       video.datetime = Date.now()
+      if (req.body.startTime) {
+        video.startTime = req.body.startTime
+      } else {
+        video.startTime = Date.now()
+      }
+
+      if (req.body.endTime) {
+        video.endTime = req.body.endTime
+      } else {
+        var m = moment(video.startTime)
+        m.add(1, 'hours')
+        video.endTime = m.format()
+      }
 
       var participants = []
 

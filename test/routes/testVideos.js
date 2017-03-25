@@ -54,10 +54,11 @@ describe('Videos', function () {
           res.body.data.should.have.property('sessionId')
           res.body.data.should.have.property('datetime')
           res.body.data.should.have.property('name')
+          res.body.data.should.have.property('startTime')
+          res.body.data.should.have.property('endTime')
           res.body.data.should.have.property('_id')
           res.body.data.should.have.property('participants')
           var chatName = res.body.data.name
-
           Videocall.findOne({ name: chatName }, function (err, video) {
             should.not.exist(err)
             should.not.equal(video, null)
@@ -95,6 +96,8 @@ describe('Videos', function () {
           video.name = 'TestChatName'
           video.sessionId = session.sessionId
           video.datetime = Date.now()
+          video.startTime = Date.now()
+          video.endTime = Date.now()
           video.participants = []
 
           video.save(function (err, data) {
@@ -107,6 +110,8 @@ describe('Videos', function () {
                 res.should.be.json
                 res.body.should.be.an('array')
                 res.body[0].should.be.a('object')
+                res.body[0].should.have.property('startTime')
+                res.body[0].should.have.property('endTime')
                 res.body[0].should.have.property('_id')
                 res.body[0].should.have.property('datetime')
                 res.body[0].should.have.property('sessionId')

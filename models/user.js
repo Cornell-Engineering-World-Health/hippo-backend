@@ -8,7 +8,7 @@ var UserSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   google: {
-    id: { type: String },
+    id: { type: Number },
     token: { type: String }
   },
   // Array referencing the userIds of contact
