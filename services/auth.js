@@ -22,7 +22,7 @@ exports.ensureAuthenticated = function (req, res, next) {
   if (payload.exp <= moment().unix()) {
     return res.status(401).send({ message: 'Token has expired' })
   }
-  User.find({ 'google.id': payload.sub }, function (err, user) {
+  User.findById(payload.sub, function (err, user) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_READ(err))
     }
