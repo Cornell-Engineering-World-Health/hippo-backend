@@ -81,7 +81,7 @@ router.post('/', function (req, res) {
         req.body.invitedUserIds = []
       }
 
-      for (var userId in req.body.invitedUserIds) {
+      for (var userId of req.body.invitedUserIds) {
         participants.push(User.findOne({ userId: userId }).exec())
       }
       Q.all(participants)
