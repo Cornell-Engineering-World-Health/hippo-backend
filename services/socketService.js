@@ -77,7 +77,8 @@ module.exports = function(io) {
 
     // add all participants in this call to the room
     for (var i in participants) {
-      currentlyConnected[participants[i].email].join(name, null)
+      if(currentlyConnected[participants[i].email] != null)
+        currentlyConnected[participants[i].email].join(name, null)
     }
   }
 
