@@ -44,6 +44,7 @@ router.post('/google', function (req, res) {
       if (profile.error) {
         return res.status(500).send({message: profile.error.message})
       }
+
       // Link user accounts.
       if (req.header('Authorization')) {
         User.findOne({ 'google.id': profile.sub }, function (err, existingUser) {
@@ -66,7 +67,7 @@ router.post('/google', function (req, res) {
         })
       } else {
         // Create a new user account or return an existing one.
-        User.findOne({ 'google.id': profile.sub }, function (err, existingUser) {
+        User.findOne({ 'email': profile.email }, function (err, existingUser) {
           if (err) {
             return res.status(500).json(Errors.INTERNAL_OAUTH(err))
           }
