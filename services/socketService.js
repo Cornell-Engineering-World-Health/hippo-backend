@@ -15,6 +15,8 @@ module.exports.init = function (socketIo) {
 
     clientSocket.on('user-online', function (data) {
       // console.log(data.email)
+      userEmail = data.email
+
       User.findOne({ email: data.email }, function (err, user) {
         if (err) {
           // Invalid user name
@@ -24,7 +26,8 @@ module.exports.init = function (socketIo) {
               // user is not in any call yet
             } else {
               // Add the user to all of their rooms
-              for (var i = 0; i < calls.size; i++) {
+              for (var i in calls) {
+                console.log('adding ' + userEmail + ' to room ' + calls[i].name)
                 clientSocket.join(calls[i].name, null)
               }
             }
@@ -33,7 +36,6 @@ module.exports.init = function (socketIo) {
       })
 
       currentlyConnected[data.email] = clientSocket
-      userEmail = data.email
       console.log('adding ' + data.email)
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
@@ -77,10 +79,12 @@ module.exports.createNewRoom = function (name, participants) {
   io.of(name)
 
   // add all participants in this call to the room
-  console.log(currentlyConnected)
   for (var i in participants) {
     if(participants[i].email in currentlyConnected)
+    {
+      console.log('adding ' + participants[i].email + ' to room ' + name)
       currentlyConnected[participants[i].email].join(name, null)
+    }
   }
 }
 
