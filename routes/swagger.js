@@ -22,11 +22,11 @@ router.get('/auth', function (req, res) {
       return res.status(500).json(Errors.INTERNAL_OAUTH(err))
     }
     if (user == null) {
-      var user = new User()
+      user = new User()
       user.google.id = 8378
-      user.firstName = "Test"
-      user.lastName = "User"
-      user.email = "testuser@testing.com"
+      user.firstName = 'Test'
+      user.lastName = 'User'
+      user.email = 'testuser@testing.com'
       user.calls = []
       user.contacts = []
       user.save(function (err, user) {
