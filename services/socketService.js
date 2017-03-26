@@ -98,7 +98,8 @@ module.exports.createNewRoom = function (name, participants) {
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
 module.exports.alertSessionConnection = function (name, joiner) {
-  console.log('alerting a session')
+  console.log('alerting a session ' + name)
+  console.log('joiner ' + joiner)
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
   currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
