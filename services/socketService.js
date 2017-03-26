@@ -79,7 +79,8 @@ module.exports.createNewRoom = function (name, participants) {
   // add all participants in this call to the room
   console.log(currentlyConnected)
   for (var i in participants) {
-    currentlyConnected[participants[i].email].join(name, null)
+    if(participants[i].email in currentlyConnected)
+      currentlyConnected[participants[i].email].join(name, null)
   }
 }
 
