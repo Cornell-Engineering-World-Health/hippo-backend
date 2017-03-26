@@ -1,9 +1,11 @@
-module.exports = function (io) {
-  var User = require('../models/user')
-  var Videocall = require('../models/videocall')
+var User = require('../models/user')
+var Videocall = require('../models/videocall')
 
-  var currentlyConnected = {} // associative array
+var currentlyConnected = [] // associative array
+var io
 
+module.exports.init = function (socketIo) {
+  io = socketIo
   // New user has sent their info
   io.on('connection', function (clientSocket) {
     // add this user to all of their perspective rooms
@@ -64,35 +66,34 @@ module.exports = function (io) {
     clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
     clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
   })
-
-  /* eslint-disable */
-
-  // Creating a new room when a new session is created
-  // Rooms can only be connected to on the server side
-  var createNewRoom = function (name, participants) {
-    console.log('creating a new room ' + name)
-    io.of(name)
-
-    // add all participants in this call to the room
-    for (var i in participants) {
-      currentlyConnected[participants[i].email].join(name, null)
-    }
-  }
-
-  var deleteRoom = function (name) {
-    console.log('deleting room ' + name)
-    io.sockets.in(name).leave(name)
-  }
-
-  // Alerting all users in a session when someone joins the call
-  // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
-  var alertSessionConnection = function (name, joiner) {
-    console.log('alerting a session')
-    // broadcast to all of the users in the namespace 'name' that 'joiner' has
-    // joined the call
-    currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
-  }
-  /* eslint-disable */
-
-  return this
 }
+
+/* eslint-disable */
+
+// Creating a new room when a new session is created
+// Rooms can only be connected to on the server side
+module.exports.createNewRoom = function (name, participants) {
+  console.log('creating a new room ' + name)
+  io.of(name)
+
+  // add all participants in this call to the room
+  console.log(currentlyConnected)
+  for (var i in participants) {
+    currentlyConnected[participants[i].email].join(name, null)
+  }
+}
+
+module.exports.deleteRoom = function (name) {
+  console.log('deleting room ' + name)
+  io.sockets.in(name).leave(name)
+}
+
+// Alerting all users in a session when someone joins the call
+// TODO: add this to the videocall get -> make sure you have the username of the user who made the request
+module.exports.alertSessionConnection = function (name, joiner) {
+  console.log('alerting a session')
+  // broadcast to all of the users in the namespace 'name' that 'joiner' has
+  // joined the call
+  currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
+}
+/* eslint-disable */

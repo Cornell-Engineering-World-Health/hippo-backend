@@ -57,7 +57,8 @@ app.use('/swagger', require('./routes/swagger.js'))
 
 // Start the server
 var io = require('socket.io').listen(app.listen(port))
-var socketService = require('./services/socketService')(io)
+var socketService = require('./services/socketService')
+socketService.init(io)
 app.set('socketService', socketService)
 
 console.log('Server running on port ' + port)
