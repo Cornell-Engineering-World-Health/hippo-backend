@@ -52,7 +52,7 @@ module.exports.init = function (socketIo) {
 
     clientSocket.on('sessionDisconnected', function (data) { console.log('sessionDisconnected') })
     clientSocket.on('sessionConnected', function (data) {
-      alertSessionConnection(data.sessionName, userEmail)
+      module.exports.alertSessionConnection(data.sessionName, userEmail)
       console.log('sessionConnected')
     })
     clientSocket.on('streamCreated', function (data) { console.log('streamCreated') })
@@ -79,14 +79,17 @@ module.exports.createNewRoom = function (name, participants) {
   // add all participants in this call to the room
   console.log(currentlyConnected)
   for (var i in participants) {
-    currentlyConnected[participants[i].email].join(name, null)
+    if(participants[i].email in currentlyConnected)
+      currentlyConnected[participants[i].email].join(name, null)
   }
 }
 
-module.exports.deleteRoom = function (name) {
-  console.log('deleting room ' + name)
-  io.sockets.in(name).leave(name)
-}
+// module.exports.deleteRoom = function (name) {
+//   console.log('deleting room ' + name)
+//   io.sockets.clients(name).forEach(function (s) {
+//     s.leave(name);
+//   })
+// }
 
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request

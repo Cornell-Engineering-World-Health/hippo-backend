@@ -250,8 +250,8 @@
         })
       } else {
       // Delete the socket room
-        console.log(req.app.get('socketService').deleteRoom)
-        req.app.get('socketService').deleteRoom(video.name)
+      // console.log(req.app.get('socketService').deleteRoom)
+      // req.app.get('socketService').deleteRoom(video.name)
 
         res.json({
           message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
