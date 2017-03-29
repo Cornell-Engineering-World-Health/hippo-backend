@@ -100,8 +100,13 @@ module.exports.createNewRoom = function (name, participants) {
 module.exports.alertSessionConnection = function (name, joiner) {
   console.log('alerting a session ' + name)
   console.log('joiner ' + joiner)
+  var socketsInRoom 	= io.sockets.adapter.rooms[name]
+  console.log('people in room:')
+  for (var key in socketsInRoom) {
+    console.log('-' + key)
+  }
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
-  currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
+  currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner }, currentlyConnected[joiner].id)
 }
 /* eslint-disable */
