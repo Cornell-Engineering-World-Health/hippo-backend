@@ -22,7 +22,7 @@ router.get('/:callId', function (req, res) {
       res.status(500).json(Errors.INTERNAL_READ(err))
       return
     }
-    if (events.length == 0) {
+    if (events.length === 0) {
       res.status(404).json(Errors.CALL_NOT_FOUND(req.params.callId))
     }
     var cdr = {}
@@ -54,23 +54,11 @@ router.get('/:callId', function (req, res) {
         if (!match) {
           cdr.userIds.push(events[k].userId)
         }
-      }
-      /**
-      else if(events[k].eventType.event == 'connectionDestroyed'){
-        cdr.disconnections.push(""+events[k].userId+", "+events[k].eventType.reason+", "+events[k].timestamp)
-      }
-      */
-      else if (events[k].eventType.event === 'sessionDisconnected') {
+      } else if (events[k].eventType.event === 'sessionDisconnected') {
         cdr.disconnections.push('' + events[k].userId + ', ' + events[k].eventType.reason + ', ' + events[k].timestamp)
       } else if (events[k].eventType.event === 'streamCreated') {
         cdr.streamCreations.push('' + events[k].userId + ', ' + events[k].timestamp)
-      }
-      /**
-      else if(events[k].eventType.event == 'streamDestroyed'){
-        cdr.streamDestroyed.push(""+events[k].userId+", "+events[k].timestamp)
-      }
-      */
-      else if (events[k].eventType.event === 'frameRate') {
+      } else if (events[k].eventType.event === 'frameRate') {
         cdr.frameRates.push('' + events[k].userId + ', ' + events[k].eventType.frameRate + ', ' + events[k].timestamp)
       } else if (events[k].eventType.event === 'hasAudio') {
         cdr.hasAudios.push('' + events[k].userId + ', ' + events[k].eventType.hasAudio + ', ' + events[k].timestamp)
