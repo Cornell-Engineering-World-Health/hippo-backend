@@ -1,4 +1,11 @@
 var errors = {
+  INTERNAL_OAUTH: function (err) {
+    return {
+      code: '500 Internal Server Error',
+      detail: 'Internal Error thrown during OAuth2 Authentication',
+      error: err
+    }
+  },
   INTERNAL_OPENTOK: function (err) {
     return {
       code: '500 Internal Server Error',
@@ -17,6 +24,13 @@ var errors = {
     return {
       code: '500 Internal Server Error',
       detail: 'Internal Mongoose error while writing to database.',
+      error: err
+    }
+  },
+  INTERNAL_DB: function (err) {
+    return {
+      code: '500 Internal Server Error',
+      detail: 'Internal Mongoose error while using the database.',
       error: err
     }
   },
