@@ -84,13 +84,6 @@ module.exports.createNewRoom = function (name, participants) {
   }
 }
 
-// module.exports.deleteRoom = function (name) {
-//   console.log('deleting room ' + name)
-//   io.sockets.clients(name).forEach(function (s) {
-//     s.leave(name);
-//   })
-// }
-
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
 module.exports.alertSessionConnection = function (name, joiner) {
@@ -98,5 +91,13 @@ module.exports.alertSessionConnection = function (name, joiner) {
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
   currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
+}
+
+module.exports.getNumberOfCallParticipants = function (name) {
+  // Will this throw an error if no socket room with this name?
+  if (io.sockets.clients(name)) {
+    return io.sockets.clients(name).length
+  }
+  return 0
 }
 /* eslint-disable */

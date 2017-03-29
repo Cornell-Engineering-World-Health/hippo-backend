@@ -6,6 +6,7 @@ var should = chai.should()
 var Videocall = require('../../models/videocall')
 var User = require('../../models/user')
 var UsersResource = require('../resources/usersResource')
+var moment = require('moment')
 var sinon = require('sinon')
 chai.use(chaiHttp)
 
@@ -26,9 +27,9 @@ describe('Videos', function () {
   })
   afterEach(function (done) {
     Videocall.find({}).remove(function () {
-      User.find({}).remove(function () {
-        done()
-      })
+      // User.find({}).remove(function () {
+      done()
+      // })
     })
   })
   after(function (done) {
@@ -130,19 +131,17 @@ describe('Videos', function () {
     opentok.createSession(function (err, session) {
       should.not.exist(err)
 
-      var testUser = UsersResource.newTestUser(UsersResource.testUser1)
-      testUser.save(function (err, user) {
+      var video = new Videocall()
+      video.name = 'TestChatName'
+      video.sessionId = session.sessionId
+      video.startTime = Date.now()
+      video.endTime = moment(Date.now()).add(1, 'hours').format()
+      video.datetime = Date.now()
+      video.participants = [globalTestUser._id]
+
+      video.save(function (err, data) {
         should.not.exist(err)
-
-        var video = new Videocall()
-        video.name = 'TestChatName'
-        video.sessionId = session.sessionId
-        video.datetime = Date.now()
-        video.participants = [user._id]
-
-        video.save(function (err, data) {
-          should.not.exist(err)
-          chai.request(server)
+        chai.request(server)
             .get('/api/videos/' + data.name)
             .end(function (err, res) {
               should.not.exist(err)
@@ -160,7 +159,6 @@ describe('Videos', function () {
               res.body._id.should.equal(data.id)
               done()
             })
-        })
       })
     })
   })

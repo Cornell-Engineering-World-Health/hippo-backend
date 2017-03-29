@@ -1,7 +1,7 @@
 var animals = require('../resources/animals')
 var Videocall = require('../models/videocall')
 
-exports.generateChatName = function generateName (callback) {
+module.exports.generateChatName = function generateName (callback) {
   var randomAnimal = animals[Math.floor(Math.random() * animals.length)]
   var randomInt = Math.floor(Math.random() * 1000)
   var chatName = randomAnimal + randomInt
@@ -13,4 +13,14 @@ exports.generateChatName = function generateName (callback) {
       generateName(callback)
     }
   })
+}
+
+module.exports.validateUserInCall = function (user, participants) {
+  var userInCall = false
+  for (var videoParticipant of participants) {
+    if (videoParticipant.userId === user.userId) {
+      userInCall = true
+    }
+  }
+  return userInCall
 }

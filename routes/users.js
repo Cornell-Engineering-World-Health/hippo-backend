@@ -9,12 +9,12 @@ var Errors = require('../resources/errors')
  * /users:
  *   get:
  *     tags: [Users]
- *     description: Returns a Single User based on userId
+ *     description: Returns all Users
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: A single user returned
+ *         description: Public info of all registered users returned
  *         schema:
  *           $ref: '#/definitions/UserResponse'
  *       500:
