@@ -13,7 +13,7 @@
 
         //REST call - jquery
         $.post('http://localhost:3000/api/videos', { name: chatName }, function(res) {
-          var apiKey = '45762302';
+          var apiKey = '45786882';
           var sessionId = res.sessionId;
           var token = res.tokenId;
 
@@ -34,7 +34,7 @@
 
         //REST call - jquery
         $.get('http://localhost:3000/api/videos/' + chatName, function(res) {
-          var apiKey = '45762302';
+          var apiKey = '45786882';
           var sessionId = res.sessionId;
           var token = res.tokenId;
 
@@ -59,6 +59,9 @@
             <input id="joinChatName" type="text" placeholder="Chat Name Here"/>
             <button onclick="joinChat()">Join Chat</button>
         </div>
+      </div>
+      <div class="row">
+        <a href="/auth/google">Sign In with Google</a>
       </div>
     </div>
   </body>
