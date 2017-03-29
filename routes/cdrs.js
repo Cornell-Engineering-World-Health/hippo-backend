@@ -22,6 +22,9 @@ router.get('/:callId', function (req, res) {
       res.status(500).json(Errors.INTERNAL_READ(err))
       return
     }
+    if (events.length==0){
+      res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
+    }
     var cdr = {}
     cdr.sessionName = events[0].callId
     cdr.creationTime = events[0].timestamp
@@ -81,6 +84,7 @@ router.get('/:callId', function (req, res) {
     res.json(cdr)
   })
 })
+
 
 function addConnectionCreatedEvent (callEvent) {
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', userId: callEvent.clientId}, function (err, connection) {
