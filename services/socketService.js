@@ -1,5 +1,6 @@
 var User = require('../models/user')
 var Videocall = require('../models/videocall')
+var cdr = require('../services/event')
 
 var currentlyConnected = [] // associative array
 var io
@@ -52,21 +53,18 @@ module.exports.init = function (socketIo) {
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
 
-    clientSocket.on('sessionDisconnected', function (data) { console.log('sessionDisconnected') })
+    clientSocket.on('sessionDisconnected', function (data) { cdr.addConnectionDestroyEvent(data) })
     clientSocket.on('sessionConnected', function (data) {
       module.exports.alertSessionConnection(data.sessionName, userEmail)
       console.log('sessionConnected')
     })
-    clientSocket.on('streamCreated', function (data) { console.log('streamCreated') })
-    clientSocket.on('frameRate', function (data) { console.log('frameRate') })
-    clientSocket.on('hasAudio', function (data) { console.log('hasAudio') })
-    clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
-    clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
-    clientSocket.on('videoType', function (data) { console.log('videoType') })
-    clientSocket.on('streamDestroyed', function (data) { console.log('streamDestroyed') })
-    clientSocket.on('hasAudio', function (data) { console.log('hasAudio') })
-    clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
-    clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
+    clientSocket.on('streamCreated', function (data) { cdr.addStreamCreatedEvent(data) })
+    clientSocket.on('frameRate', function (data) { cdr.addFrameRateEvent(data) })
+    clientSocket.on('hasAudio', function (data) { cdr.addAudioChangeEvent(data) })
+    clientSocket.on('hasVideo', function (data) { cdr.addVideoChangeEvent(data) })
+    clientSocket.on('videoDimensions', function (data) { cdr.addVideoDimensionsChangeEvent(data) })
+    clientSocket.on('videoType', function (data) { cdr.addVideoTypeChangeEvent(data) })
+    clientSocket.on('streamDestroyed', function (data) { cdr.addStreamDestroyedEvent(data) })
   })
 }
 
