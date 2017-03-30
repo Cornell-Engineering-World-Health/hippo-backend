@@ -218,19 +218,15 @@
  *   delete:
  *     tags: [Session]
  *     description: Deletes a Single Session
+ *     consumes:
+ *       - application/json
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: video_name
- *         description: Session's Name
- *         in: path
- *         required: true
- *         type: string
  *     responses:
  *       200:
  *         description: A single session deleted.
  *         schema:
- *           $ref: '#/definitions/deleteSuccessMessage'
+ *           $ref: '#/definitions/deleteResponse'
  *       500:
  *         description: Internal Server Error
  *         schema:
