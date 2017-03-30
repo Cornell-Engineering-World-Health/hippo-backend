@@ -65,14 +65,6 @@
           video.startTime = Date.now()
         }
 
-      var tokenOptions = {}
-      tokenOptions.role = 'publisher'
-      // Generate a token.
-      var token = opentok.generateToken(session.sessionId, tokenOptions)
-      video.save(function (err, video) {
-        if (err) {
-          res.status(500).json(Errors.INTERNAL_WRITE(err))
-          return
         if (req.body.endTime) {
           video.endTime = req.body.endTime
         } else {
