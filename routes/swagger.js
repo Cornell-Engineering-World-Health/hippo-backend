@@ -34,11 +34,12 @@ router.get('/auth', function (req, res) {
           return res.status(500).json(Errors.INTERNAL_OAUTH(err))
         }
         var token = createJWT(user)
-        return res.send({ token: token })
+        res.send({ token: token })
+        return
       })
     }
     var token = createJWT(user)
-    return res.send({ token: token })
+    res.send({ token: token })
   })
 })
 

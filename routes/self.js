@@ -1,5 +1,6 @@
 var express = require('express')
 var router = express.Router()
+var moment = require('moment')
 var User = require('../models/user')
 var Errors = require('../resources/errors')
 
@@ -33,7 +34,16 @@ router.get('/', function (req, res) {
     if (user == null) {
       return res.status(404).json(Errors.USER_NOT_FOUND(req.user.userId))
     }
-    res.json(user)
+
+    user = user.toObject()
+    var currentTime = moment(Date.now())
+    for (var call of user.calls) {
+      call.active = true
+      if (moment(call.endTime).isBefore(currentTime) && req.app.get('socketService').getNumberOfCallParticipants(call.name) === 0) {
+        call.active = false
+      }
+    }
+    return res.json(user)
   })
 })
 

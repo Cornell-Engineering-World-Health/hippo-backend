@@ -95,7 +95,7 @@ module.exports.alertSessionConnection = function (name, joiner) {
 
 module.exports.getNumberOfCallParticipants = function (name) {
   // Will this throw an error if no socket room with this name?
-  if (io.sockets.clients(name)) {
+  if (io.sockets.adapter.rooms[name]) {
     return io.sockets.clients(name).length
   }
   return 0
