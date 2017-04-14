@@ -100,9 +100,11 @@ exports.makeMultipleCdrs = function makeMultipleCdrs(userId, callback) {
 	        }
 		    console.log(promises)
 		    Q.all(promises).then(function(){
+		    	console.log(cdrs)
 		    	console.log("done")
 		    }).catch(function(){
 		    	console.log("error")
 		    })
 	    }
 	 })
+}
