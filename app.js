@@ -40,7 +40,7 @@ app.get('/', function (req, res) {
 
 var router = express.Router()
 
-router.use(auth.ensureAuthenticated)
+//router.use(auth.ensureAuthenticated)
 
 router.use('/videos', require('./routes/videos.js'))
 // app.post('/videos', socketService)
