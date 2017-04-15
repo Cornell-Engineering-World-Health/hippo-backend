@@ -53,10 +53,10 @@ module.exports.init = function (socketIo) {
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
 
-    clientSocket.on('sessionDisconnected', function (data) { cdr.addConnectionDestroyEvent(data) })
+    clientSocket.on('sessionDisconnected', function (data) { cdr.addSessionDisconnectionEvent(data) })
     clientSocket.on('sessionConnected', function (data) {
       module.exports.alertSessionConnection(data.sessionName, userEmail)
-      console.log('sessionConnected')
+      cdr.addConnectionCreatedEvent(data)
     })
     clientSocket.on('streamCreated', function (data) { cdr.addStreamCreatedEvent(data) })
     clientSocket.on('frameRate', function (data) { cdr.addFrameRateEvent(data) })
