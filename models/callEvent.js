@@ -9,4 +9,3 @@ var CallEventSchema = new mongoose.Schema({
 })
 
 module.exports = connection.model('CallEvent', CallEventSchema)
-
