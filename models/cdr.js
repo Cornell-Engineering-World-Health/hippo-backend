@@ -17,4 +17,3 @@ var CDRSchema = new mongoose.Schema({
 })
 
 module.exports = connection.model('CDR', CDRSchema)
-
