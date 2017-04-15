@@ -187,7 +187,7 @@
   router.get('/:video_name', function (req, res) {
     Videocall
     .findOne({ name: req.params.video_name })
-    .populate('participants', '-google -contacts -calls')
+    .populate('participants', '-_id -__v -google -contacts -calls')
     .exec(function (err, video) {
       if (err) {
         return res.status(500).json(Errors.INTERNAL_READ(err))

@@ -7,7 +7,7 @@ var VideocallSchema = new mongoose.Schema({
   datetime: { type: Date, required: true },
   startTime: { type: Date, required: false },
   endTime: { type: Date, required: false },
-  // Array referencing the userIds of participants in the call
+  // Array referencing the objectIds of participants in the call
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 })
 
