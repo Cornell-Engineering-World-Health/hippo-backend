@@ -4,7 +4,7 @@ var moment = require('moment')
 
 module.exports.start = function () {
   var rule = new schedule.RecurrenceRule()
-  rule.hours = 23
+  rule.hour = 23
 
   var pruneCalls = schedule.scheduleJob(rule, function () {
     var twelveHoursBefore = moment(Date.now()).subtract(12, 'hours').format()
