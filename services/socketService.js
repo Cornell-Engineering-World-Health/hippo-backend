@@ -53,8 +53,8 @@ module.exports.init = function (socketIo) {
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
 
-    clientSocket.on('sessionDisconnected', function (data) { cdr.addSessionDisconnectionEvent(data) })
-    clientSocket.on('enteringSession', function (data) {
+    clientSocket.on('sessionDisconnected', function (data) { })//cdr.addSessionDisconnectionEvent(data) })
+    clientSocket.on('sessionConnected', function (data) {
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
     clientSocket.on('connectionCreated', function (data) { })//cdr.addConnectionCreatedEvent(data) })
