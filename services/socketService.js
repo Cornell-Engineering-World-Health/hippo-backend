@@ -59,7 +59,7 @@ module.exports.init = function (socketIo) {
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
-    clientSocket.on('connectionCreated', function (data) { 
+    clientSocket.on('connectionCreated', function (data) {
       console.log(data)
       cdr.addConnectionCreatedEvent(data)
     })
@@ -69,7 +69,7 @@ module.exports.init = function (socketIo) {
     clientSocket.on('hasVideo', function (data) { cdr.addVideoChangeEvent(data) })
     clientSocket.on('videoDimensions', function (data) { cdr.addVideoDimensionsChangeEvent(data) })
     clientSocket.on('videoType', function (data) { cdr.addVideoTypeChangeEvent(data) })
-    clientSocket.on('streamDestroyed', function (data) { cdr.addStreamDestroyedEvent(data) })
+    //clientSocket.on('streamDestroyed', function (data) { cdr.addStreamDestroyedEvent(data) })
   })
 }
 
