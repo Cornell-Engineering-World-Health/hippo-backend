@@ -59,7 +59,7 @@ module.exports.init = function (socketIo) {
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
-    clientSocket.on('connectionCreated', function (data) { cdr.addConnectionCreatedEvent(data) })
+    clientSocket.on('connectionCreated', function (data) { console.log(data) cdr.addConnectionCreatedEvent(data) })
     clientSocket.on('streamCreated', function (data) { cdr.addStreamCreatedEvent(data) })
     clientSocket.on('frameRate', function (data) { cdr.addFrameRateEvent(data) })
     clientSocket.on('hasAudio', function (data) { cdr.addAudioChangeEvent(data) })
