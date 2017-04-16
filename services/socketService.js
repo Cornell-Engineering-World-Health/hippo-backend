@@ -55,19 +55,19 @@ module.exports.init = function (socketIo) {
 
     clientSocket.on('sessionDisconnected', function (data) {
       module.exports.alertSessionDisconnection(data.session_name, userEmail)
-      cdr.addSessionDisconnectionEvent(data)
+      //cdr.addSessionDisconnectionEvent(data)
     })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
-    clientSocket.on('connectionCreated', function (data) { cdr.addConnectionCreatedEvent(data) })
-    clientSocket.on('streamCreated', function (data) { cdr.addStreamCreatedEvent(data) })
-    clientSocket.on('frameRate', function (data) { cdr.addFrameRateEvent(data) })
-    clientSocket.on('hasAudio', function (data) { cdr.addAudioChangeEvent(data) })
-    clientSocket.on('hasVideo', function (data) { cdr.addVideoChangeEvent(data) })
-    clientSocket.on('videoDimensions', function (data) { cdr.addVideoDimensionsChangeEvent(data) })
-    clientSocket.on('videoType', function (data) { cdr.addVideoTypeChangeEvent(data) })
-    clientSocket.on('streamDestroyed', function (data) { cdr.addStreamDestroyedEvent(data) })
+    clientSocket.on('connectionCreated', function (data) { })//cdr.addConnectionCreatedEvent(data) })
+    clientSocket.on('streamCreated', function (data) { })//cdr.addStreamCreatedEvent(data) })
+    clientSocket.on('frameRate', function (data) { })//cdr.addFrameRateEvent(data) })
+    clientSocket.on('hasAudio', function (data) { })//cdr.addAudioChangeEvent(data) })
+    clientSocket.on('hasVideo', function (data) { })//cdr.addVideoChangeEvent(data) })
+    clientSocket.on('videoDimensions', function (data) { })//cdr.addVideoDimensionsChangeEvent(data) })
+    clientSocket.on('videoType', function (data) { })//cdr.addVideoTypeChangeEvent(data) })
+    clientSocket.on('streamDestroyed', function (data) { })//cdr.addStreamDestroyedEvent(data) })
   })
 }
 
