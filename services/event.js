@@ -39,7 +39,7 @@ exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
       event.timestamp = callEvent.timestamp
       event.eventType = {}
       event.eventType.event = callEvent.eventType
-      event.userId = connectionEvent.userId
+      event.userId = callEvent.clientId
       event.save(function (err, eventInfo) {
         if (err) {
         } else {
