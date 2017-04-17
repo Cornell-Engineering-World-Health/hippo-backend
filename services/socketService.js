@@ -2,7 +2,6 @@ var User = require('../models/user')
 var Videocall = require('../models/videocall')
 var cdr = require('../services/event')
 
-
 var currentlyConnected = [] // associative array
 var io
 
@@ -56,8 +55,8 @@ module.exports.init = function (socketIo) {
 
     clientSocket.on('sessionDisconnected', function (data) {
       module.exports.alertSessionDisconnection(data.session_name, userEmail)
+      cdr.addSessionDisconnectionEvent(data)
     })
-      cdr.addSessionDisconnectionEvent(data) })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
