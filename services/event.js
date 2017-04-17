@@ -34,6 +34,7 @@ exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
     } else {
+      console.log(connectionEvent)
       var event = new CallEvent()
       event.callId = callEvent.sessionName
       event.timestamp = callEvent.timestamp

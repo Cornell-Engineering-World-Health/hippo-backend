@@ -53,18 +53,23 @@ module.exports.init = function (socketIo) {
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
 
-    clientSocket.on('sessionDisconnected', function (data) { })// cdr.addSessionDisconnectionEvent(data) })
+    clientSocket.on('sessionDisconnected', function (data) {
+      module.exports.alertSessionDisconnection(data.session_name, userEmail)
+    })
+      // cdr.addSessionDisconnectionEvent(data) })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
-    clientSocket.on('connectionCreated', function (data) { })// cdr.addConnectionCreatedEvent(data) })
+    clientSocket.on('connectionCreated', function (data) {
+      console.log(data)
+      // cdr.addConnectionCreatedEvent(data)
+    })
     clientSocket.on('streamCreated', function (data) { })// cdr.addStreamCreatedEvent(data) })
     clientSocket.on('frameRate', function (data) { })// cdr.addFrameRateEvent(data) })
     clientSocket.on('hasAudio', function (data) { })// cdr.addAudioChangeEvent(data) })
     clientSocket.on('hasVideo', function (data) { })// cdr.addVideoChangeEvent(data) })
     clientSocket.on('videoDimensions', function (data) { })// cdr.addVideoDimensionsChangeEvent(data) })
     clientSocket.on('videoType', function (data) { })// cdr.addVideoTypeChangeEvent(data) })
-    clientSocket.on('streamDestroyed', function (data) { })// cdr.addStreamDestroyedEvent(data) })
   })
 }
 
@@ -99,6 +104,12 @@ module.exports.alertSessionConnection = function (name, joiner) {
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
   currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner }, currentlyConnected[joiner].id)
+}
+
+module.exports.alertSessionDisconnection = function (name, leaver) {
+  console.log('alerting a session ' + name)
+  console.log('leaver ' + leaver)
+  currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: leaver }, currentlyConnected[leaver].id)
 }
 
 module.exports.getNumberOfCallParticipants = function (name) {
