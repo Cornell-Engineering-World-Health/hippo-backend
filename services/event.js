@@ -130,7 +130,7 @@ exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (ca
 
   event.save(function (err, eventInfo) {
     if (err) {
-      console.log('error 1')
+      console.log(err)
     } else {
       console.log(eventInfo)
     }
