@@ -117,9 +117,13 @@ module.exports.alertSessionDisconnection = function (name, leaver) {
 
 module.exports.getNumberOfCallParticipants = function (name) {
   // Will this throw an error if no socket room with this name?
-  if (io.sockets.adapter.rooms[name]) {
-    return io.sockets.adapter.rooms[name].length
+  try {
+    if (io.sockets.adapter.rooms[name]) {
+      return io.sockets.adapter.rooms[name].length
+    }
+    return 0
+  } catch (err) {
+    console.log(err)
   }
-  return 0
 }
 /* eslint-disable */
