@@ -1,6 +1,7 @@
 var User = require('../models/user')
 var Videocall = require('../models/videocall')
-// var cdr = require('../services/event')
+var cdr = require('../services/event')
+
 
 var currentlyConnected = [] // associative array
 var io

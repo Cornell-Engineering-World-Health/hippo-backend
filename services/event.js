@@ -1,14 +1,19 @@
 var CallEvent = require('../models/callEvent')
 
 exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEvent) {
+  console.log("connection created event. client:"+callEvent.clientId +"connectionId:"+callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', userId: callEvent.clientId}, function (err, connection) {
     if (err) {
+      console.log("error 1")
     } else {
       if (connection == null) {
-        CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId, userId: callEvent.clientId}, function (err, connection2) {
+        console.log("clientId is unique")
+        CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId }, function (err, connection2) {
           if (err) {
+            console.log("error 2")
           } else {
             if (connection2 == null) {
+              console.log("connectionId (and clientId) is unique. Saving.")
               var event = new CallEvent()
               event.callId = callEvent.sessionName
               event.timestamp = callEvent.timestamp
@@ -18,19 +23,26 @@ exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEven
               event.userId = callEvent.clientId
               event.save(function (err, eventInfo) {
                 if (err) {
+                  console.log("error 3")
                 } else {
+                  console.log("[CDR]")
                   console.log(eventInfo)
                 }
               })
+            } else {
+              console.log("CDR was found with connectionId:" + callEvent.userConnectionId)
             }
           }
         })
+      } else {
+         console.log("CDR was found with clientId:" + callEvent.clientId)
       }
     }
   })
 }
 
 exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
+  console.log("Stream creation for user:" + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
     } else {
@@ -123,6 +135,7 @@ exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (ca
 }
 
 exports.addFrameRateEvent = function addFrameRateEvent (callEvent) {
+  console.log("FrameRate for user:" + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
 
@@ -145,6 +158,7 @@ exports.addFrameRateEvent = function addFrameRateEvent (callEvent) {
 }
 
 exports.addAudioChangeEvent = function addAudioChangeEvent (callEvent) {
+  console.log("audio on off for user:" + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
     } else {
@@ -166,6 +180,7 @@ exports.addAudioChangeEvent = function addAudioChangeEvent (callEvent) {
 }
 
 exports.addVideoChangeEvent = function addVideoChangeEvent (callEvent) {
+  console.log("video on off for user:" + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
 
@@ -189,6 +204,7 @@ exports.addVideoChangeEvent = function addVideoChangeEvent (callEvent) {
 }
 
 exports.addVideoTypeChangeEvent = function addVideoTypeChangeEvent (callEvent) {
+  console.log("videotypechange for user:" + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
 
@@ -212,6 +228,7 @@ exports.addVideoTypeChangeEvent = function addVideoTypeChangeEvent (callEvent) {
 }
 
 exports.addVideoDimensionsChangeEvent = function addVideoDimensionsChangeEvent (callEvent) {
+  console.log("dimensions change for user:" + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
 
