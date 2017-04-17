@@ -23,7 +23,7 @@ exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEven
               event.userId = callEvent.clientId
               event.save(function (err, eventInfo) {
                 if (err) {
-                  console.log('error 3')
+                  console.log(err)
                 } else {
                   console.log('[CDR]')
                   console.log(eventInfo)
