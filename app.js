@@ -45,6 +45,8 @@ router.use(auth.ensureAuthenticated)
 router.use('/videos', require('./routes/videos.js'))
 // app.post('/videos', socketService)
 router.use('/users', require('./routes/users.js'))
+
+router.use('/cdrs', require('./routes/cdrs.js'))
 router.use('/self', require('./routes/self.js'))
 
 router.get('/', function (req, res) {

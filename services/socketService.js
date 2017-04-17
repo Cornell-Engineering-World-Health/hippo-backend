@@ -1,5 +1,6 @@
 var User = require('../models/user')
 var Videocall = require('../models/videocall')
+// var cdr = require('../services/event')
 
 var currentlyConnected = [] // associative array
 var io
@@ -15,6 +16,8 @@ module.exports.init = function (socketIo) {
 
     clientSocket.on('user-online', function (data) {
       // console.log(data.email)
+      userEmail = data.email
+
       User.findOne({ email: data.email }, function (err, user) {
         if (err) {
           // Invalid user name
@@ -24,7 +27,8 @@ module.exports.init = function (socketIo) {
               // user is not in any call yet
             } else {
               // Add the user to all of their rooms
-              for (var i = 0; i < calls.size; i++) {
+              for (var i in calls) {
+                console.log('adding ' + userEmail + ' to room ' + calls[i].name)
                 clientSocket.join(calls[i].name, null)
               }
             }
@@ -33,7 +37,6 @@ module.exports.init = function (socketIo) {
       })
 
       currentlyConnected[data.email] = clientSocket
-      userEmail = data.email
       console.log('adding ' + data.email)
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
@@ -50,21 +53,18 @@ module.exports.init = function (socketIo) {
       console.log('currently connected: ' + Object.keys(currentlyConnected).length)
     })
 
-    clientSocket.on('sessionDisconnected', function (data) { console.log('sessionDisconnected') })
-    clientSocket.on('sessionConnected', function (data) {
-      module.exports.alertSessionConnection(data.sessionName, userEmail)
-      console.log('sessionConnected')
+    clientSocket.on('sessionDisconnected', function (data) { })// cdr.addSessionDisconnectionEvent(data) })
+    clientSocket.on('sessionConnected', function (data) { // sessionConnected
+      module.exports.alertSessionConnection(data.session_name, userEmail)
     })
-    clientSocket.on('streamCreated', function (data) { console.log('streamCreated') })
-    clientSocket.on('frameRate', function (data) { console.log('frameRate') })
-    clientSocket.on('hasAudio', function (data) { console.log('hasAudio') })
-    clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
-    clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
-    clientSocket.on('videoType', function (data) { console.log('videoType') })
-    clientSocket.on('streamDestroyed', function (data) { console.log('streamDestroyed') })
-    clientSocket.on('hasAudio', function (data) { console.log('hasAudio') })
-    clientSocket.on('hasVideo', function (data) { console.log('hasVideo') })
-    clientSocket.on('videoDimensions', function (data) { console.log('videoDimensions') })
+    clientSocket.on('connectionCreated', function (data) { })// cdr.addConnectionCreatedEvent(data) })
+    clientSocket.on('streamCreated', function (data) { })// cdr.addStreamCreatedEvent(data) })
+    clientSocket.on('frameRate', function (data) { })// cdr.addFrameRateEvent(data) })
+    clientSocket.on('hasAudio', function (data) { })// cdr.addAudioChangeEvent(data) })
+    clientSocket.on('hasVideo', function (data) { })// cdr.addVideoChangeEvent(data) })
+    clientSocket.on('videoDimensions', function (data) { })// cdr.addVideoDimensionsChangeEvent(data) })
+    clientSocket.on('videoType', function (data) { })// cdr.addVideoTypeChangeEvent(data) })
+    clientSocket.on('streamDestroyed', function (data) { })// cdr.addStreamDestroyedEvent(data) })
   })
 }
 
@@ -77,20 +77,28 @@ module.exports.createNewRoom = function (name, participants) {
   io.of(name)
 
   // add all participants in this call to the room
-  console.log(currentlyConnected)
   for (var i in participants) {
     if(participants[i].email in currentlyConnected)
+    {
+      console.log('adding ' + participants[i].email + ' to room ' + name)
       currentlyConnected[participants[i].email].join(name, null)
+    }
   }
 }
 
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
 module.exports.alertSessionConnection = function (name, joiner) {
-  console.log('alerting a session')
+  console.log('alerting a session ' + name)
+  console.log('joiner ' + joiner)
+  var socketsInRoom 	= io.sockets.adapter.rooms[name]
+  console.log('people in room:')
+  for (var key in socketsInRoom) {
+    console.log('-' + key)
+  }
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
-  currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner })
+  currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner }, currentlyConnected[joiner].id)
 }
 
 module.exports.getNumberOfCallParticipants = function (name) {
