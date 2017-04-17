@@ -121,7 +121,7 @@ exports.addStreamDestroyedEvent= function addStreamDestroyedEvent(callEvent){
 exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (callEvent) {
   console.log('session disconnect for user: ' + callEvent.userId)
   var event = new CallEvent()
-  event.callId = callEvent.session_name
+  event.callId = callEvent.sessionName
   event.timestamp = callEvent.timestamp
   event.eventType = {}
   event.eventType.event = callEvent.eventType
