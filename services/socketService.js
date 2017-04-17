@@ -54,11 +54,11 @@ module.exports.init = function (socketIo) {
     })
 
     clientSocket.on('sessionDisconnected', function (data) {
-      module.exports.alertSessionDisconnection(data.session_name, userEmail)
+      module.exports.alertSessionDisconnection(data.sessionName, userEmail)
       cdr.addSessionDisconnectionEvent(data)
     })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
-      module.exports.alertSessionConnection(data.session_name, userEmail)
+      module.exports.alertSessionConnection(data.sessionName, userEmail)
     })
     clientSocket.on('connectionCreated', function (data) {
       console.log(data)
