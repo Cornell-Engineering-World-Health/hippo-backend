@@ -119,6 +119,7 @@ exports.addStreamDestroyedEvent= function addStreamDestroyedEvent(callEvent){
 */
 
 exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (callEvent) {
+  console.log('session disconnect for user: ' + callEvent.userId)
   var event = new CallEvent()
   event.callId = callEvent.sessionName
   event.timestamp = callEvent.timestamp
@@ -128,7 +129,9 @@ exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (ca
   event.userId = callEvent.userId
 
   event.save(function (err, eventInfo) {
-    if (err) {} else {
+    if (err) {
+      console.log('error 1')
+    } else {
       console.log(eventInfo)
     }
   })
