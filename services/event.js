@@ -1,7 +1,5 @@
 var CallEvent = require('../models/callEvent')
-user1 connection1
-user2 connection1
-user2 connection2
+
 exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEvent) {
   console.log("connection created event. client:"+callEvent.clientId +"connectionId:"+callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', userId: callEvent.clientId}, function (err, connection) {
