@@ -1,6 +1,6 @@
 var User = require('../models/user')
 var Videocall = require('../models/videocall')
-//var cdr = require('../services/event')
+// var cdr = require('../services/event')
 
 var currentlyConnected = [] // associative array
 var io
@@ -54,21 +54,22 @@ module.exports.init = function (socketIo) {
     })
 
     clientSocket.on('sessionDisconnected', function (data) {
-      module.exports.alertSessionDisconnection(data.session_name, userEmail) })
-      //cdr.addSessionDisconnectionEvent(data) })
+      module.exports.alertSessionDisconnection(data.session_name, userEmail)
+    })
+      // cdr.addSessionDisconnectionEvent(data) })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
     clientSocket.on('connectionCreated', function (data) {
       console.log(data)
-      //cdr.addConnectionCreatedEvent(data)
+      // cdr.addConnectionCreatedEvent(data)
     })
-    clientSocket.on('streamCreated', function (data) { })//cdr.addStreamCreatedEvent(data) })
-    clientSocket.on('frameRate', function (data) { })//cdr.addFrameRateEvent(data) })
-    clientSocket.on('hasAudio', function (data) { })//cdr.addAudioChangeEvent(data) })
-    clientSocket.on('hasVideo', function (data) { })//cdr.addVideoChangeEvent(data) })
-    clientSocket.on('videoDimensions', function (data) { })//cdr.addVideoDimensionsChangeEvent(data) })
-    clientSocket.on('videoType', function (data) { })//cdr.addVideoTypeChangeEvent(data) })
+    clientSocket.on('streamCreated', function (data) { })// cdr.addStreamCreatedEvent(data) })
+    clientSocket.on('frameRate', function (data) { })// cdr.addFrameRateEvent(data) })
+    clientSocket.on('hasAudio', function (data) { })// cdr.addAudioChangeEvent(data) })
+    clientSocket.on('hasVideo', function (data) { })// cdr.addVideoChangeEvent(data) })
+    clientSocket.on('videoDimensions', function (data) { })// cdr.addVideoDimensionsChangeEvent(data) })
+    clientSocket.on('videoType', function (data) { })// cdr.addVideoTypeChangeEvent(data) })
   })
 }
 
@@ -90,13 +91,6 @@ module.exports.createNewRoom = function (name, participants) {
   }
 }
 
-// module.exports.deleteRoom = function (name) {
-//   console.log('deleting room ' + name)
-//   io.sockets.clients(name).forEach(function (s) {
-//     s.leave(name);
-//   })
-// }
-
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
 module.exports.alertSessionConnection = function (name, joiner) {
@@ -116,5 +110,13 @@ module.exports.alertSessionDisconnection = function (name, leaver) {
   console.log('alerting a session ' + name)
   console.log('leaver ' + leaver)
   currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: leaver }, currentlyConnected[leaver].id)
+}
+
+module.exports.getNumberOfCallParticipants = function (name) {
+  // Will this throw an error if no socket room with this name?
+  if (io.sockets.adapter.rooms[name]) {
+    return io.sockets.clients(name).length
+  }
+  return 0
 }
 /* eslint-disable */

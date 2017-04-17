@@ -43,7 +43,7 @@ var errors = {
   CALL_NOT_FOUND: function (name) {
     return {
       code: '404 Not Found',
-      detail: 'Requested video name: \'' + name + '\' does not exist.'
+      detail: 'Requested video name: \'' + name + '\' with user as a participant does not exist.'
     }
   }
 }

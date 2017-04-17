@@ -9,12 +9,12 @@ var Errors = require('../resources/errors')
  * /users:
  *   get:
  *     tags: [Users]
- *     description: Returns a Single User based on userId
+ *     description: Returns all Users
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: A single user returned
+ *         description: Public info of all registered users returned
  *         schema:
  *           $ref: '#/definitions/UserResponse'
  *       500:
@@ -25,21 +25,13 @@ var Errors = require('../resources/errors')
 router.get('/', function (req, res) {
   User
   .find({ })
+  .select('-_id -calls -__v -google -contacts')
   .exec(function (err, users) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_READ(err))
     }
     // Return a limited scope of the user's actual information
-    var userList = []
-    for (var user of users) {
-      userList.push({
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
-      })
-    }
-    res.json({ users: userList })
+    res.json({ users: users })
   })
 })
 
@@ -71,6 +63,7 @@ router.get('/', function (req, res) {
 router.get('/:user_id', function (req, res) {
   User
   .findOne({ userId: req.params.user_id })
+  .select('-_id -calls -__v -google -contacts')
   .exec(function (err, user) {
     if (err) {
       return res.status(500).json(Errors.INTERNAL_READ(err))
@@ -79,12 +72,7 @@ router.get('/:user_id', function (req, res) {
       return res.status(404).json(Errors.USER_NOT_FOUND(req.params.user_id))
     }
     // Return a limited scope of the user's actual information
-    res.json({
-      userId: user.userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email
-    })
+    res.json(user)
   })
 })
 
