@@ -12,7 +12,8 @@ var UserSchema = new mongoose.Schema({
     token: { type: String }
   },
   // Array referencing the userIds of contact
-  contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  picture: { type: String }
 }, { id: false })
 
 UserSchema.virtual('calls', {

@@ -63,6 +63,10 @@ var socketService = require('./services/socketService')
 socketService.init(io)
 app.set('socketService', socketService)
 
+// Run all cron jobs
+var cron = require('./services/cron.js')
+cron.start()
+
 console.log('Server running on port ' + port)
 
 module.exports = app

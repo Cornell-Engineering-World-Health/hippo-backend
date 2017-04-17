@@ -102,7 +102,7 @@
             return res.status(500).json(Errors.INTERNAL_WRITE(err))
           }
           // Populate participants of the call
-          video.populate('participants', function (err) {
+          video.populate('participants', '-google -contacts -calls', function (err) {
             if (err) {
               return res.status(500).json(Errors.INTERNAL_READ(err))
             }
@@ -187,14 +187,18 @@
   router.get('/:video_name', function (req, res) {
     Videocall
     .findOne({ name: req.params.video_name })
-    .populate('participants')
+    .populate('participants', '-_id -__v -google -contacts -calls')
     .exec(function (err, video) {
       if (err) {
         return res.status(500).json(Errors.INTERNAL_READ(err))
       }
-      if (video == null) {
+      // Authenticate to make sure req.user is in participants list
+      if (video == null || !videoServices.validateUserInCall(req.user, video.participants)) {
         return res.status(404).json(Errors.CALL_NOT_FOUND(req.params.video_name))
-      } else {
+      }
+      // Compare endTime and currentTime
+      var currentTime = Date.now()
+      if (moment(video.endTime).isAfter(moment(currentTime)) || req.app.get('socketService').getNumberOfCallParticipants > 0) {
         var tokenOptions = {}
         tokenOptions.role = 'publisher'
 
@@ -202,12 +206,9 @@
         var token = opentok.generateToken(video.sessionId, tokenOptions)
         video = video.toObject()
         video.tokenId = token
-
-        // NEEDS TO BE CHANGED TO THE ACTUAL NAME OF THE PARTICIPANT WHO JOINED
-        // req.app.get('socketService').alertSessionConnection(video.name, video.participants[0].email)
-
-        res.json(video)
       }
+
+      res.json(video)
     })
   })
 
@@ -245,10 +246,6 @@
           name: req.params.video_name
         })
       } else {
-      // Delete the socket room
-      // console.log(req.app.get('socketService').deleteRoom)
-      // req.app.get('socketService').deleteRoom(video.name)
-
         res.json({
           message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
           name: req.params.video_name

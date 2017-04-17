@@ -1,6 +1,7 @@
 var User = require('../models/user')
 var Videocall = require('../models/videocall')
-//var cdr = require('../services/event')
+var cdr = require('../services/event')
+
 
 var currentlyConnected = [] // associative array
 var io
@@ -55,21 +56,21 @@ module.exports.init = function (socketIo) {
 
     clientSocket.on('sessionDisconnected', function (data) {
       module.exports.alertSessionDisconnection(data.session_name, userEmail)
-      cdr.addSessionDisconnectionEvent(data) })
+    })
+      // cdr.addSessionDisconnectionEvent(data) })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
       module.exports.alertSessionConnection(data.session_name, userEmail)
     })
     clientSocket.on('connectionCreated', function (data) {
       console.log(data)
-      cdr.addConnectionCreatedEvent(data)
+      // cdr.addConnectionCreatedEvent(data)
     })
-    clientSocket.on('streamCreated', function (data) { cdr.addStreamCreatedEvent(data) })
-    clientSocket.on('frameRate', function (data) { cdr.addFrameRateEvent(data) })
-    clientSocket.on('hasAudio', function (data) { cdr.addAudioChangeEvent(data) })
-    clientSocket.on('hasVideo', function (data) { cdr.addVideoChangeEvent(data) })
-    clientSocket.on('videoDimensions', function (data) { cdr.addVideoDimensionsChangeEvent(data) })
-    clientSocket.on('videoType', function (data) { cdr.addVideoTypeChangeEvent(data) })
-    //clientSocket.on('streamDestroyed', function (data) { cdr.addStreamDestroyedEvent(data) })
+    clientSocket.on('streamCreated', function (data) { })// cdr.addStreamCreatedEvent(data) })
+    clientSocket.on('frameRate', function (data) { })// cdr.addFrameRateEvent(data) })
+    clientSocket.on('hasAudio', function (data) { })// cdr.addAudioChangeEvent(data) })
+    clientSocket.on('hasVideo', function (data) { })// cdr.addVideoChangeEvent(data) })
+    clientSocket.on('videoDimensions', function (data) { })// cdr.addVideoDimensionsChangeEvent(data) })
+    clientSocket.on('videoType', function (data) { })// cdr.addVideoTypeChangeEvent(data) })
   })
 }
 
@@ -91,31 +92,39 @@ module.exports.createNewRoom = function (name, participants) {
   }
 }
 
-// module.exports.deleteRoom = function (name) {
-//   console.log('deleting room ' + name)
-//   io.sockets.clients(name).forEach(function (s) {
-//     s.leave(name);
-//   })
-// }
-
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
 module.exports.alertSessionConnection = function (name, joiner) {
   console.log('alerting a session ' + name)
   console.log('joiner ' + joiner)
-  var socketsInRoom 	= io.sockets.adapter.rooms[name]
-  console.log('people in room:')
-  for (var key in socketsInRoom) {
-    console.log('-' + key)
-  }
+  //var socketsInRoom 	= io.sockets.adapter.rooms[name]
+  //console.log('people in room:')
+  //for (var key in socketsInRoom) {
+  //  console.log('-' + key)
+  //}
+
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
-  currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner }, currentlyConnected[joiner].id)
+  if(typeof currentlyConnected[joiner] !== "undefined")
+    currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner }, currentlyConnected[joiner].id)
 }
 
 module.exports.alertSessionDisconnection = function (name, leaver) {
   console.log('alerting a session ' + name)
   console.log('leaver ' + leaver)
-  currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: leaver }, currentlyConnected[leaver].id)
+  if(typeof currentlyConnected[leaver] !== "undefined")
+    currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: leaver }, currentlyConnected[leaver].id)
+}
+
+module.exports.getNumberOfCallParticipants = function (name) {
+  // Will this throw an error if no socket room with this name?
+  try {
+    if (io.sockets.adapter.rooms[name]) {
+      return io.sockets.adapter.rooms[name].length
+    }
+    return 0
+  } catch (err) {
+    console.log(err)
+  }
 }
 /* eslint-disable */

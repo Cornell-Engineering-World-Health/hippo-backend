@@ -72,6 +72,7 @@ router.post('/google', function (req, res) {
             return res.status(500).json(Errors.INTERNAL_OAUTH(err))
           }
           if (existingUser) {
+            existingUser.picture = existingUser.picture || profile.picture.replace('sz=50', 'sz=200')
             return res.send({ token: createJWT(existingUser) })
           }
           var user = new User()
@@ -81,6 +82,7 @@ router.post('/google', function (req, res) {
           user.email = profile.email
           user.calls = []
           user.contacts = []
+          user.picture = profile.picture.replace('sz=50', 'sz=200')
           user.save(function (err) {
             if (err) {
               return res.status(500).json(Errors.INTERNAL_OAUTH(err))
