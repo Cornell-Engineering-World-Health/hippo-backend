@@ -50,17 +50,17 @@ exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEven
 }
 
 exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
-  try {
-    console.log('Stream creation for user:' + callEvent.userConnectionId)
-    CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
-      if (err) {
-      } else {
-        console.log(connectionEvent)
-        var event = new CallEvent()
-        event.callId = callEvent.sessionName
-        event.timestamp = callEvent.timestamp
-        event.eventType = {}
-        event.eventType.event = callEvent.eventType
+  console.log('Stream creation for user:' + callEvent.userConnectionId)
+  CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
+    if (err) {
+    } else {
+      console.log(connectionEvent)
+      var event = new CallEvent()
+      event.callId = callEvent.sessionName
+      event.timestamp = callEvent.timestamp
+      event.eventType = {}
+      event.eventType.event = callEvent.eventType
+      if (connectionEvent != null) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
@@ -68,12 +68,11 @@ exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
             console.log(eventInfo)
           }
         })
+      } else {
+        console.log('user rejoin error: addStreamCreatedEvent')
       }
-    })
-  } catch (err) {
-    console.log('try-catch error: addStreamCreatedEvent')
-    console.log(err)
-  }
+    }
+  })
 }
 
 /**
@@ -132,42 +131,37 @@ exports.addStreamDestroyedEvent= function addStreamDestroyedEvent(callEvent){
 */
 
 exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (callEvent) {
-  try {
-    console.log('session disconnect for user: ' + callEvent.userId)
-    var event = new CallEvent()
-    event.callId = callEvent.sessionName
-    event.timestamp = callEvent.timestamp
-    event.eventType = {}
-    event.eventType.event = callEvent.eventType
-    event.eventType.reason = callEvent.reason
-    event.userId = callEvent.userId
+  console.log('session disconnect for user: ' + callEvent.userId)
+  var event = new CallEvent()
+  event.callId = callEvent.sessionName
+  event.timestamp = callEvent.timestamp
+  event.eventType = {}
+  event.eventType.event = callEvent.eventType
+  event.eventType.reason = callEvent.reason
+  event.userId = callEvent.userId
 
-    event.save(function (err, eventInfo) {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log(eventInfo)
-      }
-    })
-  } catch (err) {
-    console.log('try-catch error: addSessionDisconnectionEvent')
-    console.log(err)
-  }
+  event.save(function (err, eventInfo) {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(eventInfo)
+    }
+  })
 }
 
 exports.addFrameRateEvent = function addFrameRateEvent (callEvent) {
-  try {
-    console.log('FrameRate for user:' + callEvent.userConnectionId)
-    CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
-      if (err) {
+  console.log('FrameRate for user:' + callEvent.userConnectionId)
+  CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
+    if (err) {
 
-      } else {
-        var event = new CallEvent()
-        event.callId = callEvent.sessionName
-        event.timestamp = callEvent.timestamp
-        event.eventType = {}
-        event.eventType.event = callEvent.eventType
-        event.eventType.frameRate = callEvent.frameRate
+    } else {
+      var event = new CallEvent()
+      event.callId = callEvent.sessionName
+      event.timestamp = callEvent.timestamp
+      event.eventType = {}
+      event.eventType.event = callEvent.eventType
+      event.eventType.frameRate = callEvent.frameRate
+      if (connectionEvent != null) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
@@ -175,26 +169,25 @@ exports.addFrameRateEvent = function addFrameRateEvent (callEvent) {
             console.log(eventInfo)
           }
         })
+      } else {
+        console.log('user rejoin error: addFrameRateEvent')
       }
-    })
-  } catch (err) {
-    console.log('try-catch error: addFrameRateEvent')
-    console.log(err)
-  }
+    }
+  })
 }
 
 exports.addAudioChangeEvent = function addAudioChangeEvent (callEvent) {
-  try {
-    console.log('audio on off for user:' + callEvent.userConnectionId)
-    CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
-      if (err) {
-      } else {
-        var event = new CallEvent()
-        event.callId = callEvent.sessionName
-        event.timestamp = callEvent.timestamp
-        event.eventType = {}
-        event.eventType.event = callEvent.eventType
-        event.eventType.hasAudio = callEvent.hasAudio
+  console.log('audio on off for user:' + callEvent.userConnectionId)
+  CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
+    if (err) {
+    } else {
+      var event = new CallEvent()
+      event.callId = callEvent.sessionName
+      event.timestamp = callEvent.timestamp
+      event.eventType = {}
+      event.eventType.event = callEvent.eventType
+      event.eventType.hasAudio = callEvent.hasAudio
+      if (connectionEvent != null) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
@@ -202,99 +195,92 @@ exports.addAudioChangeEvent = function addAudioChangeEvent (callEvent) {
             console.log(eventInfo)
           }
         })
+      } else {
+        console.log('user rejoin error: addAudioChangeEvent')
       }
-    })
-  } catch (err) {
-    console.log('try-catch error: addAudioChangeEvent')
-    console.log(err)
-  }
+    }
+  })
 }
 
 exports.addVideoChangeEvent = function addVideoChangeEvent (callEvent) {
-  try {
-    console.log('video on off for user:' + callEvent.userConnectionId)
-    CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
-      if (err) {
+  console.log('video on off for user:' + callEvent.userConnectionId)
+  CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
+    if (err) {
 
-      } else {
-        var event = new CallEvent()
-        event.callId = callEvent.sessionName
-        event.timestamp = callEvent.timestamp
-        event.eventType = {}
-        event.eventType.event = callEvent.eventType
-        event.eventType.hasVideo = callEvent.hasVideo
+    } else {
+      var event = new CallEvent()
+      event.callId = callEvent.sessionName
+      event.timestamp = callEvent.timestamp
+      event.eventType = {}
+      event.eventType.event = callEvent.eventType
+      event.eventType.hasVideo = callEvent.hasVideo
+      if (connectionEvent != null) {
         event.userId = connectionEvent.userId
-
         event.save(function (err, eventInfo) {
           if (err) {
           } else {
             console.log(eventInfo)
           }
         })
+      } else {
+        console.log('user rejoin error: addVideoChangeEvent')
       }
-    })
-  } catch (err) {
-    console.log('try-catch error: addVideoChangeEvent')
-    console.log(err)
-  }
+    }
+  })
 }
 
 exports.addVideoTypeChangeEvent = function addVideoTypeChangeEvent (callEvent) {
-  try {
-    console.log('videotypechange for user:' + callEvent.userConnectionId)
-    CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
-      if (err) {
+  console.log('videotypechange for user:' + callEvent.userConnectionId)
+  CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
+    if (err) {
 
-      } else {
-        var event = new CallEvent()
-        event.callId = callEvent.sessionName
-        event.timestamp = callEvent.timestamp
-        event.eventType = {}
-        event.eventType.event = callEvent.eventType
-        event.eventType.videoType = callEvent.videoType
+    } else {
+      var event = new CallEvent()
+      event.callId = callEvent.sessionName
+      event.timestamp = callEvent.timestamp
+      event.eventType = {}
+      event.eventType.event = callEvent.eventType
+      event.eventType.videoType = callEvent.videoType
+      if (connectionEvent != null) {
         event.userId = connectionEvent.userId
-
         event.save(function (err, eventInfo) {
           if (err) {
           } else {
             console.log(eventInfo)
           }
         })
+      } else {
+        console.log('user rejoin error: addVideoTypeChangeEvent')
       }
-    })
-  } catch (err) {
-    console.log('try-catch error: addVideoTypeChangeEvent')
-    console.log(err)
-  }
+    }
+  })
 }
 
 exports.addVideoDimensionsChangeEvent = function addVideoDimensionsChangeEvent (callEvent) {
-  try {
-    console.log('dimensions change for user:' + callEvent.userConnectionId)
-    CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
-      if (err) {
+  console.log('dimensions change for user:' + callEvent.userConnectionId)
+  CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
+    if (err) {
 
-      } else {
-        var event = new CallEvent()
-        event.callId = callEvent.sessionName
-        event.timestamp = callEvent.timestamp
-        event.eventType = {}
-        event.eventType.event = callEvent.eventType
-        event.eventType.dimensions = {}
-        event.eventType.dimensions.width = callEvent.width
-        event.eventType.dimensions.height = callEvent.height
+    } else {
+      var event = new CallEvent()
+      event.callId = callEvent.sessionName
+      event.timestamp = callEvent.timestamp
+      event.eventType = {}
+      event.eventType.event = callEvent.eventType
+      event.eventType.dimensions = {}
+      event.eventType.dimensions.width = callEvent.width
+      event.eventType.dimensions.height = callEvent.height
+      if (connectionEvent != null) {
         event.userId = connectionEvent.userId
-
         event.save(function (err, eventInfo) {
           if (err) {
           } else {
             console.log(eventInfo)
           }
         })
+      } else {
+        console.log('user rejoin error: addStreamCreatedEvent')
       }
-    })
-  } catch (err) {
-    console.log('try-catch error: addVideoDimensionsChangeEvent')
-    console.log(err)
-  }
+    }
+  })
 }
