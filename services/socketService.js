@@ -13,6 +13,7 @@ module.exports.init = function (socketIo) {
     // users are distinguished by username
     clientSocket.emit('confirmation', {msg: 'it worked'})
     var userEmail = ''
+    var userName = ''
 
     clientSocket.on('user-online', function (data) {
       // console.log(data.email)
@@ -22,6 +23,7 @@ module.exports.init = function (socketIo) {
         if (err) {
           // Invalid user name
         } else {
+          userName = user.firstName + ' ' + user.lastName
           Videocall.find({ participants: { $all: user } }, function (err, calls) {
             if (err) {
               // user is not in any call yet
@@ -54,11 +56,11 @@ module.exports.init = function (socketIo) {
     })
 
     clientSocket.on('sessionDisconnected', function (data) {
-      module.exports.alertSessionDisconnection(data.sessionName, userEmail)
+      module.exports.alertSessionDisconnection(data.sessionName, userEmail, userName)
       cdr.addSessionDisconnectionEvent(data)
     })
     clientSocket.on('sessionConnected', function (data) { // sessionConnected
-      module.exports.alertSessionConnection(data.sessionName, userEmail)
+      module.exports.alertSessionConnection(data.sessionName, userEmail, userName)
     })
     clientSocket.on('connectionCreated', function (data) { cdr.addConnectionCreatedEvent(data) })
     clientSocket.on('streamCreated', function (data) { cdr.addStreamCreatedEvent(data) })
@@ -90,7 +92,7 @@ module.exports.createNewRoom = function (name, participants) {
 
 // Alerting all users in a session when someone joins the call
 // TODO: add this to the videocall get -> make sure you have the username of the user who made the request
-module.exports.alertSessionConnection = function (name, joiner) {
+module.exports.alertSessionConnection = function (name, joiner, username) {
   console.log('alerting a session ' + name)
   console.log('joiner ' + joiner)
   //var socketsInRoom 	= io.sockets.adapter.rooms[name]
@@ -102,14 +104,14 @@ module.exports.alertSessionConnection = function (name, joiner) {
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
   if(typeof currentlyConnected[joiner] !== "undefined")
-    currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: joiner }, currentlyConnected[joiner].id)
+    currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: username }, currentlyConnected[joiner].id)
 }
 
-module.exports.alertSessionDisconnection = function (name, leaver) {
+module.exports.alertSessionDisconnection = function (name, leaver, username) {
   console.log('alerting a session ' + name)
   console.log('leaver ' + leaver)
   if(typeof currentlyConnected[leaver] !== "undefined")
-    currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: leaver }, currentlyConnected[leaver].id)
+    currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: username }, currentlyConnected[leaver].id)
 }
 
 module.exports.getNumberOfCallParticipants = function (name) {
