@@ -27,6 +27,8 @@ router.post('/google', function (req, res) {
     redirect_uri: req.body.redirectUri,
     grant_type: 'authorization_code'
   }
+  console.log("REQ: ", req)
+  console.log("PARAMS: ", params)
 
   // Exchange authorization code for access token.
   request.post(accessTokenUrl, { json: true, form: params }, function (err, response, token) {
