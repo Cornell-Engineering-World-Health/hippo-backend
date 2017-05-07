@@ -213,46 +213,4 @@
     })
   })
 
-// // ROUTE - takes a code, and deletes session
-// /**
-//  * @swagger
-//  * /videos/{video_name}:
-//  *   delete:
-//  *     tags: [Session]
-//  *     description: Deletes a Single Session
-//  *     consumes:
-//  *       - application/json
-//  *     produces:
-//  *       - application/json
-//  *     responses:
-//  *       200:
-//  *         description: A single session deleted.
-//  *         schema:
-//  *           $ref: '#/definitions/deleteResponse'
-//  *       500:
-//  *         description: Internal Server Error
-//  *         schema:
-//  *           $ref: '#/definitions/Error'
-//  *
-//  */
-//   router.delete('/:video_name', function (req, res) {
-//     Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
-//       if (err) {
-//         return res.status(500).json(Errors.INTERNAL_READ(err))
-//       }
-//       if (video == null) {
-//         return res.json({
-//           message: 'Session with name: \'' + req.params.video_name + '\' was not found in the database. ' +
-//                   'It may have already been deleted',
-//           name: req.params.video_name
-//         })
-//       } else {
-//         res.json({
-//           message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
-//           name: req.params.video_name
-//         })
-//       }
-//     })
-//   })
-
   module.exports = router

@@ -150,70 +150,14 @@ describe('Videos', function () {
               res.body.should.be.a('object')
               res.body.should.have.property('name')
               res.body.should.have.property('sessionId')
-              res.body.should.have.property('_id')
               res.body.should.have.property('tokenId')
               res.body.name.should.equal(data.name)
               res.body.sessionId.should.equal(data.sessionId)
               res.body.should.have.property('participants')
               res.body.participants.length.should.equal(1)
-              res.body._id.should.equal(data.id)
               done()
             })
       })
-    })
-  })
-  it('should delete a SINGLE session on /videos/:video_name DELETE', function (done) {
-    var video = new Videocall()
-    video.name = 'TestChatName'
-    video.sessionId = 'TestSessionId'
-    video.tokenId = 'TestTokenId'
-    video.datetime = Date.now()
-    video.participants = []
-
-    video.save(function (err, data) {
-      should.not.exist(err)
-      chai.request(server)
-        .delete('/api/videos/' + data.name)
-        .set('Accept', 'application/json')
-        .end(function (err, res) {
-          should.not.exist(err)
-          res.should.have.status(200)
-          res.should.be.json
-          res.body.should.be.a('object')
-          res.body.should.have.property('message')
-          res.body.should.have.property('name')
-          res.body.name.should.equal(data.name)
-
-          Videocall.findOne({ name: data.name }, function (err, video) {
-            should.not.exist(err)
-            should.equal(video, null)
-          })
-          done()
-        })
-    })
-  })
-  it('should not send an error for Not Found on /videos/:video_name DELETE', function (done) {
-    var data = { name: 'NotFoundName' }
-    Videocall.findOne({ name: data.name }, function (err, video) {
-      should.not.exist(err)
-      should.equal(video, null)
-      chai.request(server)
-        .delete('/api/videos/' + data.name)
-        .end(function (err, res) {
-          should.not.exist(err)
-          res.should.have.status(200)
-          res.should.be.json
-          res.body.should.be.a('object')
-          res.body.should.have.property('message')
-          res.body.should.have.property('name')
-          res.body.name.should.equal(data.name)
-
-          Videocall.findOne({ name: data.name }, function (err, video) {
-            should.not.exist(err)
-            should.equal(video, null)
-          })
-          done()
-        })
     })
   })
 })
