@@ -14,6 +14,8 @@ var cdr = require('../services/event')
 //    - Value is the socket associated with that user
 var currentlyConnected = []
 
+var callConnected = []
+
 // Allowing access to the socket server locally
 var io
 
@@ -109,21 +111,30 @@ module.exports.alertSessionConnection = function (name, joiner, username) {
   // broadcast to all of the users in the namespace 'name' that 'joiner' has
   // joined the call
   if(typeof currentlyConnected[joiner] !== "undefined")
+  {
     currentlyConnected[joiner].to(name).emit('user-has-connected', { joiner: username }, currentlyConnected[joiner].id)
+    if(callConnected[name] !== "undefined")
+      callConnected[name]+=1
+    else
+      callConnected[name]=1
+  }
 }
 
 // Alerting all users in a session when someone exits the call
 module.exports.alertSessionDisconnection = function (name, leaver, username) {
   if(typeof currentlyConnected[leaver] !== "undefined")
+  {
     currentlyConnected[leaver].to(name).emit('user-has-disconnected', { leaver: username }, currentlyConnected[leaver].id)
+    if(callConnected[name] !== "undefined")
+      callConnected[name]-=1
+  }
 }
 
 // returns the number of participants in a call
 module.exports.getNumberOfCallParticipants = function (name) {
   try {
-    if (io.sockets.adapter.rooms[name]) {
-      return io.sockets.adapter.rooms[name].length
-    }
+    if (callConnected[name])//io.sockets.adapter.rooms[name]) {
+      return callConnected[name]//io.sockets.adapter.rooms[name].length
     return 0
   } catch (err) {
     console.log(err)
