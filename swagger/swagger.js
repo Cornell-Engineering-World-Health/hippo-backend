@@ -29,21 +29,34 @@
    definitions: {
      'SessionWithToken': {
        'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
+       'type': 'object',
        'properties': {
-         '_id': {
-           'type': 'string'
-         },
          'sessionId': {
            'type': 'string'
          },
          'name': {
            'type': 'string'
          },
-         '_v': {
-           'type': 'integer'
-         },
          'tokenId': {
            'type': 'string'
+         },
+         'startTime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'endTime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'datetime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'participants': {
+           'type': 'array',
+           'items': {
+             '$ref': 'UserResponse'
+           }
          }
        }
      },
@@ -56,19 +69,30 @@
        }
      },
      'Session': {
-       'required': ['_id', 'tokenId', 'sessionId', 'name', '_v'],
+       'required': ['tokenId', 'sessionId', 'name'],
        'properties': {
-         '_id': {
-           'type': 'string'
-         },
          'sessionId': {
            'type': 'string'
          },
          'name': {
            'type': 'string'
          },
-         '_v': {
-           'type': 'integer'
+         'tokenId': {
+           'type': 'string'
+         },
+         'startTime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'endTime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'participants': {
+           'type': 'array',
+           'items': {
+             '$ref': 'UserResponse'
+           }
          }
        }
      },
@@ -113,6 +137,24 @@
              },
              'tokenId': {
                'type': 'string'
+             },
+             'startTime': {
+               'type': 'string',
+               'format': 'date-time'
+             },
+             'endTime': {
+               'type': 'string',
+               'format': 'date-time'
+             },
+             'datetime': {
+               'type': 'string',
+               'format': 'date-time'
+             },
+             'participants': {
+               'type': 'array',
+               'items': {
+                 '$ref': 'UserResponse'
+               }
              }
            }
          }
@@ -143,17 +185,11 @@
          }
        }
      },
-     'UserResponse': {
+     'SelfResponse': {
        'properties': {
-         'message': {
-           'type': 'string'
-         },
          'data': {
            'type': 'object',
            'properties': {
-             '_v': {
-               'type': 'integer'
-             },
              'userId': {
                'type': 'integer'
              },
@@ -166,9 +202,58 @@
              'email': {
                'type': 'string'
              },
-             '_id': {
+             'picture': {
+               'type': 'string'
+             },
+             'contacts': {
+               'type': 'array',
+               'items': {
+                 'type': 'string'
+               }
+             },
+             'google': {
+               'type': 'object'
+             },
+             'calls': {
+               'type': 'array',
+               'items': {
+                 'type': 'object'
+               }
+             }
+           }
+         }
+       }
+     },
+     'UserResponse': {
+       'properties': {
+         'data': {
+           'type': 'object',
+           'properties': {
+             'userId': {
+               'type': 'integer'
+             },
+             'firstName': {
+               'type': 'string'
+             },
+             'lastName': {
+               'type': 'string'
+             },
+             'email': {
+               'type': 'string'
+             },
+             'picture': {
                'type': 'string'
              }
+           }
+         }
+       }
+     },
+     'UserListResponse': {
+       'properties': {
+         'users': {
+           'type': 'array',
+           'items': {
+             '$ref': 'UserResponse'
            }
          }
        }

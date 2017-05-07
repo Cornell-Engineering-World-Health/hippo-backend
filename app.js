@@ -6,21 +6,19 @@ var cors = require('cors')
 var path = require('path')
 
 var app = express()
-// var http = require('http').Server(app)
-// var io = require('socket.io')(http)
-// var socketio = require('./services/socketio.js')(io)
 
 var auth = require('./services/auth')
 
 // initialize swagger-jsdoc
 var swaggerSpec = require('./swagger/swagger.js')
 
-// serve swagger
+// Serve swagger docs
 app.get('/swagger.json', function (req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)
 })
 
+// Cors filter
 app.options('*', cors())
 app.use(cors())
 
@@ -40,12 +38,11 @@ app.get('/', function (req, res) {
 
 var router = express.Router()
 
+// Ensure incoming requests are authenticated
 router.use(auth.ensureAuthenticated)
 
 router.use('/videos', require('./routes/videos.js'))
-// app.post('/videos', socketService)
 router.use('/users', require('./routes/users.js'))
-
 router.use('/cdrs', require('./routes/cdrs.js'))
 router.use('/self', require('./routes/self.js'))
 

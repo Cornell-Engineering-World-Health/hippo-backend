@@ -12,14 +12,14 @@ var Q = require('q')
  * /self:
  *   get:
  *     tags: [Self]
- *     description: Returns a Single User object for the Authenticated User
+ *     description: Returns a Single User object for the Authenticated User calling this route
  *     produces:
  *       - application/json
  *     responses:
  *       200:
  *         description: Authenticated user info is returned, including all calls
  *         schema:
- *           $ref: '#/definitions/UserResponse'
+ *           $ref: '#/definitions/SelfResponse'
  *       500:
  *         description: Internal Server Error
  *         schema:
