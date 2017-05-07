@@ -16,6 +16,12 @@ function createJWT (user) {
   return jwt.encode(payload, process.env.JWT_SECRET)
 }
 
+/**
+ * Always returns a Test User for the purposes of Swagger doc authorization.
+ * If the test user is not already in the database then it will be created.
+ * Purposely not in the swagger docs because it should not be used except for
+ * to browse the docs.
+ */
 router.get('/auth', function (req, res) {
   User.findOne({ 'google.id': 8378 }, function (err, user) {
     if (err) {

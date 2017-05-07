@@ -102,7 +102,7 @@
             return res.status(500).json(Errors.INTERNAL_WRITE(err))
           }
           // Populate participants of the call
-          video.populate('participants', '-google -contacts -calls', function (err) {
+          video.populate('participants', '-google -contacts -calls -_id -__v', function (err) {
             if (err) {
               return res.status(500).json(Errors.INTERNAL_READ(err))
             }
@@ -176,7 +176,7 @@
  *         type: string
  *     responses:
  *       200:
- *         description: A single session returned
+ *         description: A single session returned with token. Token is only returned if the videocall is not expired.
  *         schema:
  *           $ref: '#/definitions/SessionWithToken'
  *       500:
@@ -187,6 +187,7 @@
   router.get('/:video_name', function (req, res) {
     Videocall
     .findOne({ name: req.params.video_name })
+    .select('-_id -__v')
     .populate('participants', '-_id -__v -google -contacts -calls')
     .exec(function (err, video) {
       if (err) {
@@ -212,46 +213,46 @@
     })
   })
 
-// ROUTE - takes a code, and deletes session
-/**
- * @swagger
- * /videos/{video_name}:
- *   delete:
- *     tags: [Session]
- *     description: Deletes a Single Session
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: A single session deleted.
- *         schema:
- *           $ref: '#/definitions/deleteResponse'
- *       500:
- *         description: Internal Server Error
- *         schema:
- *           $ref: '#/definitions/Error'
- *
- */
-  router.delete('/:video_name', function (req, res) {
-    Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
-      if (err) {
-        return res.status(500).json(Errors.INTERNAL_READ(err))
-      }
-      if (video == null) {
-        return res.json({
-          message: 'Session with name: \'' + req.params.video_name + '\' was not found in the database. ' +
-                  'It may have already been deleted',
-          name: req.params.video_name
-        })
-      } else {
-        res.json({
-          message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
-          name: req.params.video_name
-        })
-      }
-    })
-  })
+// // ROUTE - takes a code, and deletes session
+// /**
+//  * @swagger
+//  * /videos/{video_name}:
+//  *   delete:
+//  *     tags: [Session]
+//  *     description: Deletes a Single Session
+//  *     consumes:
+//  *       - application/json
+//  *     produces:
+//  *       - application/json
+//  *     responses:
+//  *       200:
+//  *         description: A single session deleted.
+//  *         schema:
+//  *           $ref: '#/definitions/deleteResponse'
+//  *       500:
+//  *         description: Internal Server Error
+//  *         schema:
+//  *           $ref: '#/definitions/Error'
+//  *
+//  */
+//   router.delete('/:video_name', function (req, res) {
+//     Videocall.findOneAndRemove({ name: req.params.video_name }, function (err, video) {
+//       if (err) {
+//         return res.status(500).json(Errors.INTERNAL_READ(err))
+//       }
+//       if (video == null) {
+//         return res.json({
+//           message: 'Session with name: \'' + req.params.video_name + '\' was not found in the database. ' +
+//                   'It may have already been deleted',
+//           name: req.params.video_name
+//         })
+//       } else {
+//         res.json({
+//           message: 'Session with name: \'' + req.params.video_name + '\' has been deleted.',
+//           name: req.params.video_name
+//         })
+//       }
+//     })
+//   })
 
   module.exports = router

@@ -16,7 +16,7 @@ var Errors = require('../resources/errors')
  *       200:
  *         description: Public info of all registered users returned
  *         schema:
- *           $ref: '#/definitions/UserResponse'
+ *           $ref: '#/definitions/UserListResponse'
  *       500:
  *         description: Internal Server Error
  *         schema:
