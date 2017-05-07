@@ -12,7 +12,6 @@ var CDRSchema = new mongoose.Schema({
   frameRate: { type: Number, required: true },
   videoDimensions: { type: Object, required: true },
   videoType: { type: String, required: true },
-  // data: { type: String, required: true },
   participantsId: [{ type: Number, required: true }]
 })
 

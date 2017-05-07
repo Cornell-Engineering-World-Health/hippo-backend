@@ -1,6 +1,14 @@
+/**
+* makeCdr.js contains functions used to construct CDR JSONs from events in database
+*/
+
 var CallEvent = require('../models/callEvent')
 var Q = require('q')
 
+/**
+* helper function that returns a promise, which when resolved, returns
+* a Call Detail Record JSON for the given session name: callId
+*/
 var makeCdr = function makeCdr (callId) {
   return new Promise(function (resolve, reject) {
     CallEvent.find({ callId: callId }, function (err, events) {
@@ -59,6 +67,11 @@ var makeCdr = function makeCdr (callId) {
   })
 }
 
+/**
+* getOneCdr generates a CDR for the given session name: callId
+* Runs callback(err, cdr). err is a string of the error thrown and cdrs
+* is a Call Detail Record JSON.
+*/
 exports.getOneCdr = function getOneCdr (callId, callback) {
   makeCdr(callId).then(function (cdr) {
     callback('', cdr)
@@ -67,6 +80,11 @@ exports.getOneCdr = function getOneCdr (callId, callback) {
   })
 }
 
+/**
+* getAllCdrs finds all events of the user's ID: 'userId' and generates a CDR for each unique
+* session name/callId. Runs callback(err, cdrs). err is a string of the error thrown and cdrs
+* is an array of Call Detail Record JSON.
+*/
 exports.getAllCdrs = function getAllCdrs (userId, callback) {
   CallEvent.find({ userId: userId }, function (err, events) {
     if (err) {

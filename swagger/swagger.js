@@ -268,6 +268,72 @@
            'type': 'string'
          }
        }
+     },
+     'CDR': {
+       'properties': {
+         'sessionName': {
+           'type': 'string'
+         },
+         'creationTime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'destroyTime': {
+           'type': 'string',
+           'format': 'date-time'
+         },
+         'callDuration': {
+           'type': 'number'
+         },
+         'connections': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         },
+         'disconnections': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         },
+         'userIds': {
+           'type': 'array',
+           'items': {
+             'type': 'integer'
+           }
+         },
+         'streamCreations': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         },
+         'frameRates': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         },
+         'hasAudio': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         },
+         'hasVideo': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         },
+         'videoTypes': {
+           'type': 'array',
+           'items': {
+             'type': 'string'
+           }
+         }
+       }
      }
    }
  }

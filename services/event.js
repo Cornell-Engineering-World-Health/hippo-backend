@@ -1,22 +1,27 @@
+/**
+* event.js contains functions that save events during call into the database
+*/
+
 var CallEvent = require('../models/callEvent')
 
+/**
+* Takes the JSON received from front-end during connection creation event and stores it in database.
+* Since multiple clients will emit events containing the same connectionId, incoming callEvent's clientId and userConnectionID
+* is checked for uniqueness. This connection creation event contains a user's Id and their corresponding connectionId,
+* so connectionCreatedEvents can be used to retrieve userId given a connectionId.
+*/
 exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEvent) {
   try {
-    console.log('connection created event. client:' + callEvent.clientId + 'connectionId:' + callEvent.userConnectionId)
     CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', userId: callEvent.clientId}, function (err, connection) {
       if (err) {
-        console.log('error 1')
         console.log(err)
       } else {
         if (connection == null) {
-          console.log('clientId is unique')
           CallEvent.findOne({ callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId }, function (err, connection2) {
             if (err) {
-              console.log('error 2')
               console.log(err)
             } else {
               if (connection2 == null) {
-                console.log('connectionId (and clientId) is unique. Saving.')
                 var event = new CallEvent()
                 event.callId = callEvent.sessionName
                 event.timestamp = callEvent.timestamp
@@ -26,35 +31,29 @@ exports.addConnectionCreatedEvent = function addConnectionCreatedEvent (callEven
                 event.userId = callEvent.clientId
                 event.save(function (err, eventInfo) {
                   if (err) {
-                    console.log(3)
                     console.log(err)
-                  } else {
-                    console.log('[CDR]')
-                    console.log(eventInfo)
                   }
                 })
-              } else {
-                console.log('CDR was found with connectionId:' + callEvent.userConnectionId)
               }
             }
           })
-        } else {
-          console.log('CDR was found with clientId:' + callEvent.clientId)
         }
       }
     })
   } catch (err) {
-    console.log('try-catch error: addConnectionCreatedEvent')
     console.log(err)
   }
 }
 
+/**
+* Takes the JSON received from front-end during stream creation event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
 exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
-  console.log('Stream creation for user:' + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
+      console.log(err)
     } else {
-      console.log(connectionEvent)
       var event = new CallEvent()
       event.callId = callEvent.sessionName
       event.timestamp = callEvent.timestamp
@@ -64,22 +63,24 @@ exports.addStreamCreatedEvent = function addStreamCreatedEvent (callEvent) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
-          } else {
-            console.log(eventInfo)
+            console.log(err)
           }
         })
-      } else {
-        console.log('user rejoin error: addStreamCreatedEvent')
       }
     }
   })
 }
 
 /**
+* Takes the JSON received from front-end during a connection destroy event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
+/**
 exports.addConnectionDestroyEvent= function addConnectionDestroyEvent(callEvent){
 
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId, userId: callEvent.clientId}, function (err, connection){
     if (err) {
+      console.log(err)
     }
     else if(connection != null){
       var event = new CallEvent()
@@ -93,9 +94,7 @@ exports.addConnectionDestroyEvent= function addConnectionDestroyEvent(callEvent)
 
       event.save(function (err, eventInfo) {
         if (err) {
-        }
-        else{
-          console.log(eventInfo)
+          console.log(err)
         }
       })
     }
@@ -104,10 +103,14 @@ exports.addConnectionDestroyEvent= function addConnectionDestroyEvent(callEvent)
 */
 
 /**
+* Takes the JSON received from front-end during stream destory event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
+/**
 exports.addStreamDestroyedEvent= function addStreamDestroyedEvent(callEvent){
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent){
     if (err) {
-
+      console.log(err)
     }
     else{
       var event = new CallEvent()
@@ -120,9 +123,7 @@ exports.addStreamDestroyedEvent= function addStreamDestroyedEvent(callEvent){
 
       event.save(function (err, eventInfo) {
         if (err) {
-        }
-        else{
-          console.log(eventInfo)
+          console.log(err)
         }
       })
     }
@@ -130,8 +131,11 @@ exports.addStreamDestroyedEvent= function addStreamDestroyedEvent(callEvent){
 }
 */
 
+/**
+* Takes the JSON received from front-end during session disconnection event and stores it in database.
+* ConnectionCreatedEvents need not be queried because userId is accessible.
+*/
 exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (callEvent) {
-  console.log('session disconnect for user: ' + callEvent.userId)
   var event = new CallEvent()
   event.callId = callEvent.sessionName
   event.timestamp = callEvent.timestamp
@@ -143,17 +147,18 @@ exports.addSessionDisconnectionEvent = function addSessionDisconnectionEvent (ca
   event.save(function (err, eventInfo) {
     if (err) {
       console.log(err)
-    } else {
-      console.log(eventInfo)
     }
   })
 }
 
+/**
+* Takes the JSON received from front-end during Frame Rate Change event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
 exports.addFrameRateEvent = function addFrameRateEvent (callEvent) {
-  console.log('FrameRate for user:' + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
-
+      console.log(err)
     } else {
       var event = new CallEvent()
       event.callId = callEvent.sessionName
@@ -165,21 +170,22 @@ exports.addFrameRateEvent = function addFrameRateEvent (callEvent) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
-          } else {
-            console.log(eventInfo)
+            console.log(err)
           }
         })
-      } else {
-        console.log('user rejoin error: addFrameRateEvent')
       }
     }
   })
 }
 
+/**
+* Takes the JSON received from front-end during Audio On/Off Change event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
 exports.addAudioChangeEvent = function addAudioChangeEvent (callEvent) {
-  console.log('audio on off for user:' + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
+      console.log(err)
     } else {
       var event = new CallEvent()
       event.callId = callEvent.sessionName
@@ -191,22 +197,22 @@ exports.addAudioChangeEvent = function addAudioChangeEvent (callEvent) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
-          } else {
-            console.log(eventInfo)
+            console.log(err)
           }
         })
-      } else {
-        console.log('user rejoin error: addAudioChangeEvent')
       }
     }
   })
 }
 
+/**
+* Takes the JSON received from front-end during Video On/Off Change event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
 exports.addVideoChangeEvent = function addVideoChangeEvent (callEvent) {
-  console.log('video on off for user:' + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
-
+      console.log(err)
     } else {
       var event = new CallEvent()
       event.callId = callEvent.sessionName
@@ -218,22 +224,22 @@ exports.addVideoChangeEvent = function addVideoChangeEvent (callEvent) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
-          } else {
-            console.log(eventInfo)
+            console.log(err)
           }
         })
-      } else {
-        console.log('user rejoin error: addVideoChangeEvent')
       }
     }
   })
 }
 
+/**
+* Takes the JSON received from front-end during Video Type Change event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
 exports.addVideoTypeChangeEvent = function addVideoTypeChangeEvent (callEvent) {
-  console.log('videotypechange for user:' + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
-
+      console.log(err)
     } else {
       var event = new CallEvent()
       event.callId = callEvent.sessionName
@@ -245,22 +251,22 @@ exports.addVideoTypeChangeEvent = function addVideoTypeChangeEvent (callEvent) {
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
-          } else {
-            console.log(eventInfo)
+            console.log(err)
           }
         })
-      } else {
-        console.log('user rejoin error: addVideoTypeChangeEvent')
       }
     }
   })
 }
 
+/**
+* Takes the JSON received from front-end during Video Dimensions Change event and stores it in database.
+* ConnectionCreatedEvents are used to retrieve the userId given the connectionId.
+*/
 exports.addVideoDimensionsChangeEvent = function addVideoDimensionsChangeEvent (callEvent) {
-  console.log('dimensions change for user:' + callEvent.userConnectionId)
   CallEvent.findOne({callId: callEvent.sessionName, 'eventType.event': 'connectionCreated', 'eventType.connectionId': callEvent.userConnectionId}, function (err, connectionEvent) {
     if (err) {
-
+      console.log(err)
     } else {
       var event = new CallEvent()
       event.callId = callEvent.sessionName
@@ -274,12 +280,9 @@ exports.addVideoDimensionsChangeEvent = function addVideoDimensionsChangeEvent (
         event.userId = connectionEvent.userId
         event.save(function (err, eventInfo) {
           if (err) {
-          } else {
-            console.log(eventInfo)
+            console.log(err)
           }
         })
-      } else {
-        console.log('user rejoin error: addStreamCreatedEvent')
       }
     }
   })
