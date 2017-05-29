@@ -3,13 +3,33 @@
 
 [![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
-HIPAA compliant REST API for creating and managing video sessions.
+The backend REST API for hippo, a HIPAA-compliant video conferencing system. Built with OpenTok, NodeJS, MongoDB, Mongoose, Socket.io, and Google OAth. 
+
+Features include:
+* HIPAA-certified sessions through OpenTok
+* User authentication with Google OAth
+* Real-time notifications using Socket.io
+* Create and Store secure video sessions with MongoDB, Mongoose
+* Call Detail Record protocol
+* Client-Agnostic API
+
+See our web frontend interface, [hippo-frontend](https://github.com/Cornell-Engineering-World-Health/hippo-frontend)
+
+See our Android frontend application, [hippo-android](https://github.com/Cornell-Engineering-World-Health/hippo-android).
+
+View our live deployment of the web interface at https://aqueous-stream-90183.herokuapp.com.
+
+Learn more about our team, [Cornell Engineering World Health](https://ewh.engineering.cornell.edu/).
+
+For local deployment, follow these instructions:
 
 ## Setup
-* clone this repository
-* run `npm install && npm run setup`
-* import Opentok API and SECRET keys into .env file
-* Set up Google OAuth as follows
+Generate OpenTok API and SECRET keys at https://tokbox.com by creating a new project in your account.
+
+1. Clone this repository
+2. Run `npm install && npm run setup`
+3. Import your OpenTok API and SECRET keys into .env file
+4. Set up Google OAuth as follows
 
 ## Google OAuth
 Setting up the web application to support Google logins
