@@ -12,8 +12,8 @@ HIPAA compliant REST API for creating and managing video sessions.
 Refer to [here](https://developers.google.com/identity/sign-in/android/start-integrating) for extensive instructions.
 #### Prerequisites
 1. Add the Google Play Services SDK:
-- In Android Studio, select Tools > Android > SDK Manager.
-- Scroll to the bottom of the package list and select Extras > Google Repository. The package is downloaded to your computer and installed in your SDK environment at android-sdk-folder/extras/google/google_play_services.
+- In Android Studio, select **Tools > Android > SDK Manager**.
+- Scroll to the bottom of the package list and select **Extras > Google Repository**. The package is downloaded to your computer and installed in your SDK environment at *android-sdk-folder*/extras/google/google_play_services.
 #### Configuration File
 1. Find SHA-1 hash of your signing certificate [here](https://developers.google.com/android/guides/client-auth).
 2. Create or select existing project for application [here](https://developers.google.com/mobile/add?platform=android&cntapi=signin&cnturl=https:%2F%2Fdevelopers.google.com%2Fidentity%2Fsign-in%2Fandroid%2Fsign-in%3Fconfigured%3Dtrue&cntlbl=Continue%20Adding%20Sign-In).
